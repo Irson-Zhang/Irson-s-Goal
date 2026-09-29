@@ -41,6 +41,87 @@
         // Navigation State: 'home', 'editor', or 'exit'
         const [view, setView] = React.useState("home");
 
+        // Default Initial Values
+        const defaultGoals = [
+          "All ears hear well, are fully healed, and are able to perceive sound with crystal clarity.",
+          "The entire body is complete, whole, perfectly functioning, and completely healthy.",
+          "Single, with no girlfriend, living together with Dad, Mom, and Kelly, with no need to think about dating or relationships anymore.",
+          "God has blessed us to live in the best possible country for us: the United States.",
+          "Successfully finished learning web development.",
+          "I want to work remotely for a U.S. company.",
+          "Provide medical treatment for Grandma (Nainai) in the United States, so that she stays healthy and lives a long, vibrant life.",
+          "Own a Tesla to take road trips around New York, Long Island, Upstate, and out of state; traveling freely across the United States with no need for international travel anymore.",
+          "Own a home at 83-45 Vietor Avenue, Elmhurst, Queens, New York; living permanently in the United States, the greatest country, with no need to move or look anywhere else.",
+          "We live and travel throughout the United States and visit family in Indonesia; just these two home countries, with no need to go anywhere else abroad.",
+          "I want to travel in the United States, Europe, and Indonesia, except for Russia, Belarus, and Ukraine.",
+        ];
+
+        const defaultFocus = [
+          "Learning web development",
+          "Learning English",
+          "Learning Mandarin Chinese",
+        ];
+
+        const defaultCountries = [
+          "🇺🇸 United States",
+          "🇮🇸 Iceland",
+          "🇳🇴 Norway",
+          "🇮🇪 Ireland",
+          "🇩🇰 Denmark",
+          "🇨🇭 Switzerland",
+          "🇫🇮 Finland",
+          "🇸🇪 Sweden",
+          "🇩🇪 Germany",
+          "🇳🇱 Netherlands",
+          "🇦🇹 Austria",
+          "🇧🇪 Belgium",
+          "🇱🇺 Luxembourg",
+          "🇬🇧 United Kingdom",
+          "🇸🇮 Slovenia",
+          "🇨🇿 Czech Republic",
+          "🇫🇷 France",
+          "🇪🇸 Spain",
+          "🇨🇾 Cyprus",
+          "🇵🇹 Portugal",
+          "🇪🇪 Estonia",
+          "🇲🇨 Monaco",
+          "🇱🇮 Liechtenstein",
+          "🇲🇹 Malta",
+          "🇮🇹 Italy",
+          "🇵🇱 Poland",
+          "🇸🇲 San Marino",
+          "🇦🇩 Andorra",
+          "🇬🇷 Greece",
+          "🇱🇹 Lithuania",
+          "🇭🇷 Croatia",
+          "🇸🇰 Slovakia",
+          "🇱🇻 Latvia",
+          "🇮🇩 Indonesia",
+          "🇷🇴 Romania",
+          "🇭🇺 Hungary",
+          "🇹🇷 Turkey",
+          "🇰🇿 Kazakhstan",
+          "🇲🇪 Montenegro",
+          "🇧🇬 Bulgaria",
+          "🇷🇸 Serbia",
+          "🇬🇪 Georgia",
+          "🇦🇱 Albania",
+          "🇲🇰 North Macedonia",
+          "🇦🇲 Armenia",
+          "🇦🇿 Azerbaijan",
+          "🇽🇰 Kosovo",
+          "🇧🇦 Bosnia and Herzegovina",
+          "🇲🇩 Moldova",
+          "🇻🇦 Vatican City",
+        ];
+
+        const defaultFooter = [
+          "I want this to become real in the future in Irson's Goal.",
+          "All of this is completely true in Irson's Goal.",
+          "Dad, Mom, Kelly, and I all remember this very well in Irson's Goal.",
+          "I want these dreams to be achieved in Irson's Goal.",
+        ];
+
         // Application Data State with LocalStorage Persistence
         const [appName, setAppName] = React.useState(
           () => localStorage.getItem("irs_appName") || "Irson's Goal",
@@ -52,103 +133,44 @@
 
         const [goals, setGoals] = React.useState(() => {
           const saved = localStorage.getItem("irs_goals");
-          return saved
-            ? JSON.parse(saved)
-            : [
-                "All ears hear well, are fully healed, and are able to perceive sound with crystal clarity.",
-                "The entire body is complete, whole, perfectly functioning, and completely healthy.",
-                "Single, with no girlfriend, living together with Dad, Mom, and Kelly, with no need to think about dating or relationships anymore.",
-                "God has blessed us to live in the best possible country for us: the United States.",
-                "Successfully finished learning web development.",
-                "I want to work remotely for a U.S. company.",
-                "Provide medical treatment for Grandma (Nainai) in the United States, so that she stays healthy and lives a long, vibrant life.",
-                "Own a Tesla to take road trips around New York, Long Island, Upstate, and out of state; traveling freely across the United States with no need for international travel anymore.",
-                "Own a home at 83-45 Vietor Avenue, Elmhurst, Queens, New York; living permanently in the United States, the greatest country, with no need to move or look anywhere else.",
-                "We live and travel throughout the United States and visit family in Indonesia; just these two home countries, with no need to go anywhere else abroad.",
-                "I want to travel in the United States, Europe, and Indonesia, except for Russia, Belarus, and Ukraine.",
-              ];
+          return saved ? JSON.parse(saved) : defaultGoals;
         });
 
         const [focusItems, setFocusItems] = React.useState(() => {
           const saved = localStorage.getItem("irs_focus");
-          return saved
-            ? JSON.parse(saved)
-            : [
-                "Learning web development",
-                "Learning English",
-                "Learning Mandarin Chinese",
-              ];
+          return saved ? JSON.parse(saved) : defaultFocus;
         });
 
         const [countries, setCountries] = React.useState(() => {
           const saved = localStorage.getItem("irs_countries");
-          return saved
-            ? JSON.parse(saved)
-            : [
-                "🇺🇸 United States",
-                "🇮🇸 Iceland",
-                "🇳🇴 Norway",
-                "🇮🇪 Ireland",
-                "🇩🇰 Denmark",
-                "🇨🇭 Switzerland",
-                "🇫🇮 Finland",
-                "🇸🇪 Sweden",
-                "🇩🇪 Germany",
-                "🇳🇱 Netherlands",
-                "🇦🇹 Austria",
-                "🇧🇪 Belgium",
-                "🇱🇺 Luxembourg",
-                "🇬🇧 United Kingdom",
-                "🇸🇮 Slovenia",
-                "🇨🇿 Czech Republic",
-                "🇫🇷 France",
-                "🇪🇸 Spain",
-                "🇨🇾 Cyprus",
-                "🇵🇹 Portugal",
-                "🇪🇪 Estonia",
-                "🇲🇨 Monaco",
-                "🇱🇮 Liechtenstein",
-                "🇲🇹 Malta",
-                "🇮🇹 Italy",
-                "🇵🇱 Poland",
-                "🇸🇲 San Marino",
-                "🇦🇩 Andorra",
-                "🇬🇷 Greece",
-                "🇱🇹 Lithuania",
-                "🇭🇷 Croatia",
-                "🇸🇰 Slovakia",
-                "🇱🇻 Latvia",
-                "🇮🇩 Indonesia",
-                "🇷🇴 Romania",
-                "🇭🇺 Hungary",
-                "🇹🇷 Turkey",
-                "🇰🇿 Kazakhstan",
-                "🇲🇪 Montenegro",
-                "🇧🇬 Bulgaria",
-                "🇷🇸 Serbia",
-                "🇬🇪 Georgia",
-                "🇦🇱 Albania",
-                "🇲🇰 North Macedonia",
-                "🇦🇲 Armenia",
-                "🇦🇿 Azerbaijan",
-                "🇽🇰 Kosovo",
-                "🇧🇦 Bosnia and Herzegovina",
-                "🇲🇩 Moldova",
-                "🇻🇦 Vatican City",
-              ];
+          return saved ? JSON.parse(saved) : defaultCountries;
         });
 
         const [footerTexts, setFooterTexts] = React.useState(() => {
           const saved = localStorage.getItem("irs_footer");
-          return saved
-            ? JSON.parse(saved)
-            : [
-                "I want this to become real in the future in Irson's Goal.",
-                "All of this is completely true in Irson's Goal.",
-                "Dad, Mom, Kelly, and I all remember this very well in Irson's Goal.",
-                "I want these dreams to be achieved in Irson's Goal.",
-              ];
+          return saved ? JSON.parse(saved) : defaultFooter;
         });
+
+        // Reset progress function
+        const handleResetProgress = () => {
+          if (
+            window.confirm(
+              "Are you sure you want to reset all goals, focus items, countries, and footers back to their default state?",
+            )
+          ) {
+            setAppName("Irson's Goal");
+            setGoals(defaultGoals);
+            setFocusItems(defaultFocus);
+            setCountries(defaultCountries);
+            setFooterTexts(defaultFooter);
+
+            localStorage.removeItem("irs_appName");
+            localStorage.removeItem("irs_goals");
+            localStorage.removeItem("irs_focus");
+            localStorage.removeItem("irs_countries");
+            localStorage.removeItem("irs_footer");
+          }
+        };
 
         // Save handlers
         React.useEffect(() => {
@@ -358,7 +380,7 @@
             {/* VIEW 2: FULL EDITORS SUITE */}
             {view === "editor" && (
               <div className="space-y-8 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100">
-                <div className="border-b pb-4 flex justify-between items-center">
+                <div className="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <h2 className="text-2xl font-bold text-primary">
                       Advanced Full-Stack Goal Editors
@@ -368,12 +390,20 @@
                       instantly. Changes sync with local database state.
                     </p>
                   </div>
-                  <button
-                    onClick={() => setView("home")}
-                    className="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium shadow"
-                  >
-                    Save & Home
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleResetProgress}
+                      className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg text-sm font-medium shadow transition"
+                    >
+                      Reset Progress
+                    </button>
+                    <button
+                      onClick={() => setView("home")}
+                      className="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium shadow"
+                    >
+                      Save & Home
+                    </button>
+                  </div>
                 </div>
 
                 {/* 1. Goals Editor */}
