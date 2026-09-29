@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Irson's Goal Application</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1e3a8a",
+              accent: "#2563eb",
+              bg: "#f8fafc",
+            },
+          },
+        },
+      };
+    </script>
+    <!-- React & ReactDOM -->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-700 min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      function App() {
+        // Navigation State: 'home' or 'dashboard'
+        const [view, setView] = React.useState("home");
+
+        // Application Data State with LocalStorage Persistence
+        const [appName, setAppName] = React.useState(
+          () => localStorage.getItem("irs_appName") || "Irson's Goal",
+        );
+        const [isEditingAppName, setIsEditingAppName] = React.useState(false);
+
+        const [goals, setGoals] = React.useState(() => {
+          const saved = localStorage.getItem("irs_goals");
+          return saved
+            ? JSON.parse(saved)
+            : [
+                "All ears hear well, are fully healed, and are able to perceive sound with crystal clarity.",
+                "The entire body is complete, whole, perfectly functioning, and completely healthy.",
+                "Single, with no girlfriend, living together with Dad, Mom, and Kelly, with no need to think about dating or relationships anymore.",
+                "God has blessed us to live in the best possible country for us: the United States.",
+                "Successfully finished learning web development.",
+                "I want to work remotely for a U.S. company.",
+                "Provide medical treatment for Grandma (Nainai) in the United States, so that she stays healthy and lives a long, vibrant life.",
+                "Own a Tesla to take road trips around New York, Long Island, Upstate, and out of state; traveling freely across the United States with no need for international travel anymore.",
+                "Own a home at 83-45 Vietor Avenue, Elmhurst, Queens, New York; living permanently in the United States, the greatest country, with no need to move or look anywhere else.",
+                "We live and travel throughout the United States and visit family in Indonesia; just these two home countries, with no need to go anywhere else abroad.",
+                "I want to travel in the United States, Europe, and Indonesia, except for Russia, Belarus, and Ukraine.",
+              ];
+        });
+
+        const [focusItems, setFocusItems] = React.useState(() => {
+          const saved = localStorage.getItem("irs_focus");
+          return saved
+            ? JSON.parse(saved)
+            : [
+                "Learning web development",
+                "Learning English",
+                "Learning Mandarin Chinese",
+              ];
+        });
+
+        const [countries, setCountries] = React.useState(() => {
+          const saved = localStorage.getItem("irs_countries");
+          return saved
+            ? JSON.parse(saved)
+            : [
+                "🇺🇸 United States",
+                "🇮🇸 Iceland",
+                "🇳🇴 Norway",
+                "🇮🇪 Ireland",
+                "🇩🇰 Denmark",
+                "🇨🇭 Switzerland",
+                "🇫🇮 Finland",
+                "🇸🇪 Sweden",
+                "🇩🇪 Germany",
+                "🇳🇱 Netherlands",
+                "🇦🇹 Austria",
+                "🇧🇪 Belgium",
+                "🇱🇺 Luxembourg",
+                "🇬🇧 United Kingdom",
+                "🇸🇮 Slovenia",
+                "🇨🇿 Czech Republic",
+                "🇫🇷 France",
+                "🇪🇸 Spain",
+                "🇨🇾 Cyprus",
+                "🇵🇹 Portugal",
+                "🇪🇪 Estonia",
+                "🇲🇨 Monaco",
+                "🇱🇮 Liechtenstein",
+                "🇲🇹 Malta",
+                "🇮🇹 Italy",
+                "🇵🇱 Poland",
+                "🇸🇲 San Marino",
+                "🇦🇩 Andorra",
+                "🇬🇷 Greece",
+                "🇱🇹 Lithuania",
+                "🇭🇷 Croatia",
+                "🇸🇰 Slovakia",
+                "🇱🇻 Latvia",
+                "🇮🇩 Indonesia",
+                "🇷🇴 Romania",
+                "🇭🇺 Hungary",
+                "🇹🇷 Turkey",
+                "🇰🇿 Kazakhstan",
+                "🇲🇪 Montenegro",
+                "🇧🇬 Bulgaria",
+                "🇷🇸 Serbia",
+                "🇬🇪 Georgia",
+                "🇦🇱 Albania",
+                "🇲🇰 North Macedonia",
+                "🇦🇲 Armenia",
+                "🇦🇿 Azerbaijan",
+                "🇽🇰 Kosovo",
+                "🇧🇦 Bosnia and Herzegovina",
+                "🇲🇩 Moldova",
+                "🇻🇦 Vatican City",
+              ];
+        });
+
+        const [footerTexts, setFooterTexts] = React.useState(() => {
+          const saved = localStorage.getItem("irs_footer");
+          return saved
+            ? JSON.parse(saved)
+            : [
+                "I want this to become real in the future in Irson's Goal.",
+                "All of this is completely true in Irson's Goal.",
+                "Dad, Mom, Kelly, and I all remember this very well in Irson's Goal.",
+                "I want these dreams to be achieved in Irson's Goal.",
+              ];
+        });
+
+        // Save handlers
+        React.useEffect(() => {
+          localStorage.setItem("irs_appName", appName);
+          localStorage.setItem("irs_goals", JSON.stringify(goals));
+          localStorage.setItem("irs_focus", JSON.stringify(focusItems));
+          localStorage.setItem("irs_countries", JSON.stringify(countries));
+          localStorage.setItem("irs_footer", JSON.stringify(footerTexts));
+        }, [appName, goals, focusItems, countries, footerTexts]);
+
+        React.useEffect(() => {
+          lucide.createIcons();
+        }, [view, goals, focusItems, countries, footerTexts, isEditingAppName]);
+
+        // Item editing state helpers
+        const [newGoalText, setNewGoalText] = React.useState("");
+        const [newFocusText, setNewFocusText] = React.useState("");
+        const [newCountryText, setNewCountryText] = React.useState("");
+        const [newFooterText, setNewFooterText] = React.useState("");
+
+        return (
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            {/* Navigation Bar / Header Controls */}
+            <header className="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-8 border border-slate-100">
+              <div className="flex items-center gap-3">
+                <span className="bg-primary text-white p-2 rounded-lg font-bold text-lg">
+                  IG
+                </span>
+                <div>
+                  {isEditingAppName ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={appName}
+                        onChange={(e) => setAppName(e.target.value)}
+                        className="border px-2 py-1 rounded text-sm font-bold"
+                      />
+                      <button
+                        onClick={() => setIsEditingAppName(false)}
+                        className="bg-emerald-600 text-white px-3 py-1 text-xs rounded"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  ) : (
+                    <h2 className="text-slate-900 font-bold text-lg flex items-center gap-2">
+                      {appName}
+                      <button
+                        onClick={() => setIsEditingAppName(true)}
+                        className="text-slate-400 hover:text-accent text-xs font-normal underline"
+                      >
+                        Edit Name
+                      </button>
+                    </h2>
+                  )}
+                  <span className="text-xs text-slate-400">
+                    Full-Stack React & DOM Application
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setView("home")}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm transition flex items-center gap-2 ${view === "home" ? "bg-primary text-white shadow" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+                >
+                  <i data-lucide="home" className="w-4 h-4"></i> Home Page
+                </button>
+                <button
+                  onClick={() => setView("editor")}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm transition flex items-center gap-2 ${view === "editor" ? "bg-primary text-white shadow" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+                >
+                  <i data-lucide="settings" className="w-4 h-4"></i> Goal
+                  Editors
+                </button>
+              </div>
+            </header>
+
+            {/* VIEW 1: HOME PAGE (Clean reading layout based on original template) */}
+            {view === "home" && (
+              <main className="space-y-6">
+                <h1 className="text-3xl font-extrabold text-center uppercase tracking-widest text-primary mb-6">
+                  {appName}
+                </h1>
+
+                {/* Personal Goals Section */}
+                <section className="space-y-4">
+                  {goals.map((goal, index) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-accent"
+                    >
+                      <p className="text-slate-700">{goal}</p>
+                    </div>
+                  ))}
+                </section>
+
+                {/* Focus Card Section */}
+                <section className="bg-blue-50 border border-blue-200 rounded-xl p-6 my-6">
+                  <h2 className="text-primary font-bold text-lg mb-3">
+                    Achieved by focusing on:
+                  </h2>
+                  <ol className="list-decimal pl-5 space-y-2">
+                    {focusItems.map((item, idx) => (
+                      <li key={idx} className="font-semibold text-slate-900">
+                        {item}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+
+                {/* Country Rankings Section */}
+                <section className="bg-blue-50 border border-blue-200 rounded-xl p-6 my-6">
+                  <h2 className="text-primary font-bold text-lg mb-3">
+                    Country Rankings for {appName}:
+                  </h2>
+                  <ol className="list-decimal pl-5 grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {countries.map((country, idx) => (
+                      <li key={idx} className="font-medium text-slate-800">
+                        {country}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+
+                {/* Footer */}
+                <footer className="text-center mt-12 py-6 italic text-slate-500 space-y-2 border-t border-slate-200">
+                  {footerTexts.map((text, idx) => (
+                    <p key={idx}>{text}</p>
+                  ))}
+                </footer>
+              </main>
+            )}
+
+            {/* VIEW 2: FULL EDITORS SUITE */}
+            {view === "editor" && (
+              <div className="space-y-8 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100">
+                <div className="border-b pb-4">
+                  <h2 className="text-2xl font-bold text-primary">
+                    Advanced Full-Stack Goal Editors
+                  </h2>
+                  <p className="text-sm text-slate-500">
+                    Add, edit, rearrange, or delete items instantly. Changes
+                    sync with local database state.
+                  </p>
+                </div>
+
+                {/* 1. Goals Editor */}
+                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
+                  <h3 className="font-bold text-slate-800 flex items-center justify-between">
+                    <span>Manage Personal Goals ({goals.length})</span>
+                  </h3>
+                  <div className="space-y-2">
+                    {goals.map((goal, idx) => (
+                      <div
+                        key={idx}
+                        className="flex gap-2 items-center bg-white p-3 rounded-lg border shadow-xs"
+                      >
+                        <span className="text-xs font-bold text-slate-400 w-6">
+                          #{idx + 1}
+                        </span>
+                        <input
+                          type="text"
+                          value={goal}
+                          onChange={(e) => {
+                            const updated = [...goals];
+                            updated[idx] = e.target.value;
+                            setGoals(updated);
+                          }}
+                          className="flex-1 px-3 py-1.5 border rounded text-sm focus:outline-accent"
+                        />
+                        <button
+                          onClick={() =>
+                            setGoals(goals.filter((_, i) => i !== idx))
+                          }
+                          className="bg-red-50 text-red-600 px-3 py-1.5 rounded text-xs font-semibold hover:bg-red-100"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <input
+                      type="text"
+                      placeholder="Add new goal card..."
+                      value={newGoalText}
+                      onChange={(e) => setNewGoalText(e.target.value)}
+                      className="flex-1 px-3 py-2 border rounded text-sm bg-white"
+                    />
+                    <button
+                      onClick={() => {
+                        if (!newGoalText.trim()) return;
+                        setGoals([...goals, newGoalText]);
+                        setNewGoalText("");
+                      }}
+                      className="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
+                    >
+                      Add Goal
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Focus Items Editor */}
+                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
+                  <h3 className="font-bold text-slate-800">
+                    Manage Focus Priorities
+                  </h3>
+                  <div className="space-y-2">
+                    {focusItems.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex gap-2 items-center bg-white p-3 rounded-lg border shadow-xs"
+                      >
+                        <span className="text-xs font-bold text-slate-400 w-6">
+                          #{idx + 1}
+                        </span>
+                        <input
+                          type="text"
+                          value={item}
+                          onChange={(e) => {
+                            const updated = [...focusItems];
+                            updated[idx] = e.target.value;
+                            setFocusItems(updated);
+                          }}
+                          className="flex-1 px-3 py-1.5 border rounded text-sm"
+                        />
+                        <button
+                          onClick={() =>
+                            setFocusItems(
+                              focusItems.filter((_, i) => i !== idx),
+                            )
+                          }
+                          className="bg-red-50 text-red-600 px-3 py-1.5 rounded text-xs font-semibold hover:bg-red-100"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <input
+                      type="text"
+                      placeholder="Add new focus item..."
+                      value={newFocusText}
+                      onChange={(e) => setNewFocusText(e.target.value)}
+                      className="flex-1 px-3 py-2 border rounded text-sm bg-white"
+                    />
+                    <button
+                      onClick={() => {
+                        if (!newFocusText.trim()) return;
+                        setFocusItems([...focusItems, newFocusText]);
+                        setNewFocusText("");
+                      }}
+                      className="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
+                    >
+                      Add Focus
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. Country Rankings Editor */}
+                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
+                  <h3 className="font-bold text-slate-800">
+                    Manage Country Rankings ({countries.length})
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2 border bg-white rounded-lg">
+                    {countries.map((country, idx) => (
+                      <div
+                        key={idx}
+                        className="flex gap-2 items-center p-2 border rounded bg-slate-50"
+                      >
+                        <span className="text-xs font-bold text-slate-400">
+                          {idx + 1}.
+                        </span>
+                        <input
+                          type="text"
+                          value={country}
+                          onChange={(e) => {
+                            const updated = [...countries];
+                            updated[idx] = e.target.value;
+                            setCountries(updated);
+                          }}
+                          className="flex-1 px-2 py-1 border rounded text-xs bg-white"
+                        />
+                        <button
+                          onClick={() =>
+                            setCountries(countries.filter((_, i) => i !== idx))
+                          }
+                          className="text-red-500 font-bold text-xs px-1"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <input
+                      type="text"
+                      placeholder="Add country (e.g. 🇯🇵 Japan)..."
+                      value={newCountryText}
+                      onChange={(e) => setNewCountryText(e.target.value)}
+                      className="flex-1 px-3 py-2 border rounded text-sm bg-white"
+                    />
+                    <button
+                      onClick={() => {
+                        if (!newCountryText.trim()) return;
+                        setCountries([...countries, newCountryText]);
+                        setNewCountryText("");
+                      }}
+                      className="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
+                    >
+                      Add Country
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Footer Editor */}
+                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
+                  <h3 className="font-bold text-slate-800">
+                    Manage Footer Declarations
+                  </h3>
+                  <div className="space-y-2">
+                    {footerTexts.map((text, idx) => (
+                      <div
+                        key={idx}
+                        className="flex gap-2 items-center bg-white p-3 rounded-lg border shadow-xs"
+                      >
+                        <input
+                          type="text"
+                          value={text}
+                          onChange={(e) => {
+                            const updated = [...footerTexts];
+                            updated[idx] = e.target.value;
+                            setFooterTexts(updated);
+                          }}
+                          className="flex-1 px-3 py-1.5 border rounded text-sm"
+                        />
+                        <button
+                          onClick={() =>
+                            setFooterTexts(
+                              footerTexts.filter((_, i) => i !== idx),
+                            )
+                          }
+                          className="bg-red-50 text-red-600 px-3 py-1.5 rounded text-xs font-semibold hover:bg-red-100"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <input
+                      type="text"
+                      placeholder="Add footer text..."
+                      value={newFooterText}
+                      onChange={(e) => setNewFooterText(e.target.value)}
+                      className="flex-1 px-3 py-2 border rounded text-sm bg-white"
+                    />
+                    <button
+                      onClick={() => {
+                        if (!newFooterText.trim()) return;
+                        setFooterTexts([...footerTexts, newFooterText]);
+                        setNewFooterText("");
+                      }}
+                      className="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
+                    >
+                      Add Footer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
