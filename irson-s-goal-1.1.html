@@ -3,54 +3,386 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Irson's Goal Application</title>
-    <!-- Tailwind CSS -->
+    <title>Irson's Goal - Full-Stack Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: "class",
         theme: {
           extend: {
             colors: {
               primary: "#1e3a8a",
               accent: "#2563eb",
-              bg: "#f8fafc",
             },
           },
         },
       };
     </script>
-    <!-- React & ReactDOM -->
-    <script
-      crossorigin
-      src="https://unpkg.com/react@18/umd/react.production.min.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
-    ></script>
-    <!-- Babel for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Custom modal overlay styling to avoid standard alerts */
+      .custom-modal-backdrop {
+        background-color: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+      }
+    </style>
   </head>
-  <body class="bg-slate-50 text-slate-700 min-h-screen">
-    <div id="root"></div>
+  <body
+    class="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 min-h-screen transition-colors duration-300 py-10 px-4 sm:px-6"
+  >
+    <div
+      id="notification-modal"
+      class="fixed inset-0 custom-modal-backdrop z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl transform scale-95 transition-transform duration-300"
+        id="notification-card"
+      >
+        <div class="flex items-center gap-3 mb-3">
+          <div
+            id="notification-icon"
+            class="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-lg"
+          >
+            💡
+          </div>
+          <h3
+            id="notification-title"
+            class="font-bold text-lg text-slate-900 dark:text-white"
+          >
+            Notice
+          </h3>
+        </div>
+        <p
+          id="notification-message"
+          class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed"
+        ></p>
+        <div id="notification-actions" class="flex justify-end gap-2">
+          <button
+            id="notification-btn-ok"
+            onclick="closeNotification()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow transition"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
 
-    <script type="text/babel">
-      function App() {
-        // Navigation State: 'home', 'editor', or 'exit'
-        const [view, setView] = React.useState("home");
+    <header class="max-w-3xl mx-auto flex justify-between items-center mb-8">
+      <div class="flex items-center space-x-2">
+        <span
+          id="header-brand-title"
+          class="text-xl sm:text-2xl font-bold tracking-wider text-blue-900 dark:text-blue-400 uppercase"
+          >🎯 Irson's Goal</span
+        >
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- Navigation Switcher Buttons -->
+        <button
+          id="btn-nav-home"
+          onclick="switchView('home')"
+          class="px-3 py-2 rounded-xl bg-blue-600 text-white font-medium text-sm shadow hover:bg-blue-700 transition flex items-center gap-1"
+        >
+          🏠 Home
+        </button>
+        <button
+          id="btn-nav-editor"
+          onclick="switchView('editor')"
+          class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium text-sm shadow-sm hover:bg-slate-300 dark:hover:bg-slate-700 transition flex items-center gap-1"
+        >
+          ⚙️ Editors
+        </button>
+        <!-- Theme Toggle Button -->
+        <button
+          id="theme-toggle"
+          aria-label="Toggle Dark Mode"
+          class="p-2.5 rounded-full bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+        >
+          <svg
+            id="theme-icon-light"
+            class="w-5 h-5 hidden dark:block"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            ></path>
+          </svg>
+          <svg
+            id="theme-icon-dark"
+            class="w-5 h-5 block dark:hidden"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </header>
 
-        // Application Data State with LocalStorage Persistence
-        const [appName, setAppName] = React.useState(
-          () => localStorage.getItem("irs_appName") || "Irson's Goal",
-        );
-        const [isEditingAppName, setIsEditingAppName] = React.useState(false);
+    <main class="max-w-3xl mx-auto space-y-8">
+      <!-- ==================== VIEW 1: HOME DASHBOARD ==================== -->
+      <div id="view-home" class="space-y-8">
+        <!-- Search & Control Bar -->
+        <div
+          class="flex flex-col sm:flex-row gap-3 justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <div class="w-full sm:w-72 relative">
+            <input
+              type="text"
+              id="search-input"
+              oninput="handleSearch(this.value)"
+              placeholder="Search goals or focus items..."
+              class="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm border-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200"
+            />
+            <span class="absolute left-3 top-2.5 text-slate-400">🔍</span>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <button
+              onclick="resetProgress()"
+              class="px-4 py-2 text-sm font-semibold rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition flex items-center gap-1"
+            >
+              🔄 Reset Progress
+            </button>
+          </div>
+        </div>
 
-        // Search Filter State for Home Page
-        const [searchQuery, setSearchQuery] = React.useState("");
+        <!-- Progress Card -->
+        <section
+          class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-800"
+        >
+          <div class="flex justify-between items-center mb-3">
+            <h2
+              class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wide"
+            >
+              Goal Progress
+            </h2>
+            <span
+              id="progress-text"
+              class="text-sm font-semibold text-blue-600 dark:text-blue-400"
+              >0% Completed</span
+            >
+          </div>
+          <div
+            class="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden"
+          >
+            <div
+              id="progress-bar"
+              class="bg-blue-600 h-full rounded-full transition-all duration-500 w-0"
+            ></div>
+          </div>
+        </section>
 
-        const defaultGoals = [
+        <!-- Goals Container -->
+        <section aria-label="Personal Goals" class="space-y-4">
+          <h1
+            id="main-title-display"
+            class="text-2xl sm:text-3xl font-extrabold text-center uppercase text-blue-900 dark:text-blue-400 tracking-wider mb-6"
+          >
+            🎯 Irson's Goal
+          </h1>
+          <div id="home-goals-container" class="space-y-4"></div>
+        </section>
+
+        <!-- Focus Cards Container -->
+        <section
+          class="bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm"
+        >
+          <h2 class="text-blue-900 dark:text-blue-400 font-bold text-lg mb-4">
+            Achieved by focusing on:
+          </h2>
+          <ol id="home-focus-container" class="space-y-3"></ol>
+        </section>
+
+        <!-- Country Rankings Container -->
+        <section
+          class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm"
+        >
+          <h2 class="text-blue-900 dark:text-blue-400 font-bold text-lg mb-4">
+            Country Rankings for Irson's Goal:
+          </h2>
+          <div
+            id="home-rankings-container"
+            class="flex flex-col gap-2 font-medium text-slate-700 dark:text-slate-300"
+          ></div>
+        </section>
+
+        <!-- Footer Container -->
+        <footer
+          id="home-footer-container"
+          class="text-center italic text-slate-500 dark:text-slate-400 space-y-2 pt-4 pb-8 border-t border-slate-200 dark:border-slate-800"
+        ></footer>
+      </div>
+
+      <!-- ==================== VIEW 2: EDITORS SUITE ==================== -->
+      <div id="view-editor" class="space-y-8 hidden">
+        <div
+          class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6"
+        >
+          <!-- Header Toolbar in Editor -->
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4"
+          >
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+                🛠️ Full App Management & Editors
+              </h2>
+              <p class="text-xs text-slate-500">
+                Edit titles, text items, rearrange orders up/down, add new
+                cards, or delete items.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                onclick="saveChanges()"
+                class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-emerald-700 transition flex items-center gap-1"
+              >
+                💾 Save Changes
+              </button>
+              <button
+                onclick="switchView('home')"
+                class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-300 transition"
+              >
+                ❌ Exit Page
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. Name / Title Editor -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+              >Application Name / Title Editor:</label
+            >
+            <input
+              type="text"
+              id="edit-app-title"
+              class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
+            />
+          </div>
+
+          <!-- 2. Goals Editor with Rearrange Buttons -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <label
+                class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+                >Goal Cards Editor (Rearrange / Add / Delete):</label
+              >
+              <button
+                onclick="addItem('goals')"
+                class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                + Add Goal
+              </button>
+            </div>
+            <div
+              id="editor-goals-list"
+              class="space-y-2 max-h-72 overflow-y-auto pr-1"
+            ></div>
+          </div>
+
+          <!-- 3. Focus Cards Editor with Rearrange Buttons -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <label
+                class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+                >Focus Cards Editor (Rearrange / Add / Delete):</label
+              >
+              <button
+                onclick="addItem('focusCards')"
+                class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                + Add Focus
+              </button>
+            </div>
+            <div
+              id="editor-focus-list"
+              class="space-y-2 max-h-52 overflow-y-auto pr-1"
+            ></div>
+          </div>
+
+          <!-- 4. Country Rankings Editor with Rearrange Buttons -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <label
+                class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+                >Country Rankings Editor (1 per row, Rearrange / Add /
+                Delete):</label
+              >
+              <button
+                onclick="addItem('countryRankings')"
+                class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                + Add Country
+              </button>
+            </div>
+            <div
+              id="editor-rankings-list"
+              class="space-y-2 max-h-60 overflow-y-auto pr-1"
+            ></div>
+          </div>
+
+          <!-- 5. Footer Lines Editor with Rearrange Buttons -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <label
+                class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+                >Footer Statements Editor (Rearrange / Add / Delete):</label
+              >
+              <button
+                onclick="addItem('footerLines')"
+                class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                + Add Footer Line
+              </button>
+            </div>
+            <div
+              id="editor-footer-list"
+              class="space-y-2 max-h-48 overflow-y-auto pr-1"
+            ></div>
+          </div>
+
+          <!-- Bottom Save & Exit Actions -->
+          <div
+            class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800"
+          >
+            <button
+              onclick="switchView('home')"
+              class="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              Exit Page
+            </button>
+            <button
+              onclick="saveChanges()"
+              class="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-blue-700"
+            >
+              💾 Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const defaultAppData = {
+        appTitle: "🎯 Irson's Goal",
+        goals: [
           "All ears hear well, are fully healed, and are able to perceive sound with crystal clarity.",
           "The entire body is complete, whole, perfectly functioning, and completely healthy.",
           "Single, with no girlfriend, living together with Dad, Mom, and Kelly, with no need to think about dating or relationships anymore.",
@@ -62,15 +394,13 @@
           "Own a home at 83-45 Vietor Avenue, Elmhurst, Queens, New York; living permanently in the United States, the greatest country, with no need to move or look anywhere else.",
           "We live and travel throughout the United States and visit family in Indonesia; just these two home countries, with no need to go anywhere else abroad.",
           "I want to travel in the United States, Europe, and Indonesia, except for Russia, Belarus, and Ukraine.",
-        ];
-
-        const defaultFocus = [
+        ],
+        focusCards: [
           "Learning web development",
           "Learning English",
           "Learning Mandarin Chinese",
-        ];
-
-        const defaultCountries = [
+        ],
+        countryRankings: [
           "🇺🇸 United States",
           "🇮🇸 Iceland",
           "🇳🇴 Norway",
@@ -121,607 +451,363 @@
           "🇧🇦 Bosnia and Herzegovina",
           "🇲🇩 Moldova",
           "🇻🇦 Vatican City",
-        ];
-
-        const defaultFooter = [
+        ],
+        footerLines: [
           "I want this to become real in the future in Irson's Goal.",
           "All of this is completely true in Irson's Goal.",
           "Dad, Mom, Kelly, and I all remember this very well in Irson's Goal.",
           "I want these dreams to be achieved in Irson's Goal.",
-        ];
+        ],
+      };
 
-        const [goals, setGoals] = React.useState(() => {
-          const saved = localStorage.getItem("irs_goals");
-          return saved ? JSON.parse(saved) : defaultGoals;
-        });
+      // Load Persistent Store from LocalStorage
+      let appState =
+        JSON.parse(localStorage.getItem("irson_master_db")) || defaultAppData;
+      let activeConfirmCallback = null;
 
-        const [focusItems, setFocusItems] = React.useState(() => {
-          const saved = localStorage.getItem("irs_focus");
-          return saved ? JSON.parse(saved) : defaultFocus;
-        });
+      document.addEventListener("DOMContentLoaded", () => {
+        initTheme();
+        renderHome();
+      });
 
-        const [countries, setCountries] = React.useState(() => {
-          const saved = localStorage.getItem("irs_countries");
-          return saved ? JSON.parse(saved) : defaultCountries;
-        });
+      // Custom Safe Notification Box (replaces alert/confirm)
+      function showNotification(
+        title,
+        message,
+        isConfirm = false,
+        onConfirm = null,
+      ) {
+        const modal = document.getElementById("notification-modal");
+        const card = document.getElementById("notification-card");
+        const titleEl = document.getElementById("notification-title");
+        const msgEl = document.getElementById("notification-message");
+        const actionsEl = document.getElementById("notification-actions");
+        const iconEl = document.getElementById("notification-icon");
 
-        const [footerTexts, setFooterTexts] = React.useState(() => {
-          const saved = localStorage.getItem("irs_footer");
-          return saved ? JSON.parse(saved) : defaultFooter;
-        });
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        activeConfirmCallback = onConfirm;
 
-        // Reset progress function
-        const handleResetDefaults = () => {
-          if (
-            window.confirm(
-              "Are you sure you want to reset all goals, focus items, countries, and footers back to their default values?",
-            )
-          ) {
-            setGoals(defaultGoals);
-            setFocusItems(defaultFocus);
-            setCountries(defaultCountries);
-            setFooterTexts(defaultFooter);
-            localStorage.removeItem("irs_goals");
-            localStorage.removeItem("irs_focus");
-            localStorage.removeItem("irs_countries");
-            localStorage.removeItem("irs_footer");
+        if (isConfirm) {
+          iconEl.textContent = "⚠️";
+          actionsEl.innerHTML = `
+                    <button onclick="closeNotification(false)" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-300 transition">Cancel</button>
+                    <button onclick="closeNotification(true)" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-semibold shadow transition">Confirm</button>
+                `;
+        } else {
+          iconEl.textContent = "✨";
+          actionsEl.innerHTML = `
+                    <button onclick="closeNotification(false)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow transition">Got it</button>
+                `;
+        }
+
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          card.classList.remove("scale-95");
+          card.classList.add("scale-100");
+        }, 10);
+      }
+
+      function closeNotification(confirmed = false) {
+        const modal = document.getElementById("notification-modal");
+        const card = document.getElementById("notification-card");
+
+        modal.classList.add("opacity-0");
+        card.classList.remove("scale-100");
+        card.classList.add("scale-95");
+
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          if (confirmed && typeof activeConfirmCallback === "function") {
+            activeConfirmCallback();
           }
-        };
+          activeConfirmCallback = null;
+        }, 300);
+      }
 
-        // Save handlers
-        React.useEffect(() => {
-          localStorage.setItem("irs_appName", appName);
-          localStorage.setItem("irs_goals", JSON.stringify(goals));
-          localStorage.setItem("irs_focus", JSON.stringify(focusItems));
-          localStorage.setItem("irs_countries", JSON.stringify(countries));
-          localStorage.setItem("irs_footer", JSON.stringify(footerTexts));
-        }, [appName, goals, focusItems, countries, footerTexts]);
+      // Theme Controller
+      function initTheme() {
+        const htmlElement = document.documentElement;
+        const savedTheme = localStorage.getItem("irson_theme");
+        if (
+          savedTheme === "dark" ||
+          (!savedTheme &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          htmlElement.classList.add("dark");
+        } else {
+          htmlElement.classList.remove("dark");
+        }
 
-        React.useEffect(() => {
-          lucide.createIcons();
-        }, [
-          view,
-          goals,
-          focusItems,
-          countries,
-          footerTexts,
-          isEditingAppName,
-          searchQuery,
-        ]);
+        document
+          .getElementById("theme-toggle")
+          .addEventListener("click", () => {
+            if (htmlElement.classList.contains("dark")) {
+              htmlElement.classList.remove("dark");
+              localStorage.setItem("irson_theme", "light");
+            } else {
+              htmlElement.classList.add("dark");
+              localStorage.setItem("irson_theme", "dark");
+            }
+          });
+      }
 
-        // Item editing state helpers
-        const [newGoalText, setNewGoalText] = React.useState("");
-        const [newFocusText, setNewFocusText] = React.useState("");
-        const [newCountryText, setNewCountryText] = React.useState("");
-        const [newFooterText, setNewFooterText] = React.useState("");
+      // View Navigation Switcher
+      function switchView(viewName) {
+        const homeView = document.getElementById("view-home");
+        const editorView = document.getElementById("view-editor");
 
-        // Array reordering helper functions
-        const moveItem = (list, setList, index, direction) => {
-          const newIndex = direction === "up" ? index - 1 : index + 1;
-          if (newIndex < 0 || newIndex >= list.length) return;
-          const updated = [...list];
-          const temp = updated[index];
-          updated[index] = updated[newIndex];
-          updated[newIndex] = temp;
-          setList(updated);
-        };
+        if (viewName === "editor") {
+          syncEditorInputsFromDOM();
+          homeView.classList.add("hidden");
+          editorView.classList.remove("hidden");
+          populateEditorLists();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          editorView.classList.add("hidden");
+          homeView.classList.remove("hidden");
+          renderHome();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
 
-        const filteredGoals = goals.filter((goal) =>
-          goal.toLowerCase().includes(searchQuery.toLowerCase()),
+      // Render Home Dashboard
+      function renderHome(searchFilter = "") {
+        document.getElementById("header-brand-title").textContent =
+          appState.appTitle;
+        document.getElementById("main-title-display").textContent =
+          appState.appTitle;
+
+        // Render Goals
+        const goalsContainer = document.getElementById("home-goals-container");
+        goalsContainer.innerHTML = "";
+        appState.goals.forEach((goalText, index) => {
+          const goalId = `goal-${index + 1}`;
+          const isChecked =
+            localStorage.getItem(`irson_chk_${goalId}`) === "true";
+
+          if (
+            searchFilter &&
+            !goalText.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+            return;
+
+          const card = document.createElement("div");
+          card.className =
+            "goal-card bg-white dark:bg-slate-900 rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 border-l-4 border-l-blue-600 transition hover:shadow-md";
+          card.innerHTML = `
+                    <label class="flex items-start gap-4 cursor-pointer">
+                        <input type="checkbox" data-id="${goalId}" ${isChecked ? "checked" : ""} onchange="handleCheckboxToggle('${goalId}', this)" class="mt-1 w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800">
+                        <span class="goal-text text-slate-700 dark:text-slate-300 ${isChecked ? "line-through opacity-60" : ""}">${goalText}</span>
+                    </label>
+                `;
+          goalsContainer.appendChild(card);
+        });
+
+        // Render Focus Cards
+        const focusContainer = document.getElementById("home-focus-container");
+        focusContainer.innerHTML = "";
+        appState.focusCards.forEach((focusText, index) => {
+          const focusId = `focus-${index + 1}`;
+          const isChecked =
+            localStorage.getItem(`irson_chk_${focusId}`) === "true";
+
+          if (
+            searchFilter &&
+            !focusText.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+            return;
+
+          const li = document.createElement("li");
+          li.className = "flex items-center gap-3";
+          li.innerHTML = `
+                    <input type="checkbox" data-id="${focusId}" ${isChecked ? "checked" : ""} onchange="handleCheckboxToggle('${focusId}', this)" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800">
+                    <span class="goal-text font-semibold text-slate-900 dark:text-slate-200 ${isChecked ? "line-through opacity-60" : ""}">${focusText}</span>
+                `;
+          focusContainer.appendChild(li);
+        });
+
+        // Render Country Rankings
+        const rankingsContainer = document.getElementById(
+          "home-rankings-container",
         );
+        rankingsContainer.innerHTML = "";
+        appState.countryRankings.forEach((country, index) => {
+          const row = document.createElement("div");
+          row.className =
+            "py-2 px-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 flex items-center gap-3 text-sm";
+          row.innerHTML = `<span class="font-bold text-blue-600 dark:text-blue-400 w-8">#${index + 1}</span> <span>${country}</span>`;
+          rankingsContainer.appendChild(row);
+        });
 
-        return (
-          <div className="max-w-4xl mx-auto px-4 py-8">
-            {/* Navigation Bar / Header Controls */}
-            <header className="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-8 border border-slate-100 gap-4">
-              <div className="flex items-center gap-3 w-full md:w-auto">
-                <span className="bg-primary text-white p-2 rounded-lg font-bold text-lg">
-                  IG
-                </span>
-                <div>
-                  {isEditingAppName ? (
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={appName}
-                        onChange={(e) => setAppName(e.target.value)}
-                        className="border px-2 py-1 rounded text-sm font-bold"
-                      />
-                      <button
-                        onClick={() => setIsEditingAppName(false)}
-                        className="bg-emerald-600 text-white px-3 py-1 text-xs rounded"
-                      >
-                        Save Name
-                      </button>
-                    </div>
-                  ) : (
-                    <h2 className="text-slate-900 font-bold text-lg flex items-center gap-2">
-                      {appName}
-                      <button
-                        onClick={() => setIsEditingAppName(true)}
-                        className="text-slate-400 hover:text-accent text-xs font-normal underline"
-                      >
-                        Edit Name
-                      </button>
-                    </h2>
-                  )}
-                  <span className="text-xs text-slate-400">
-                    Full-Stack React & DOM Application
-                  </span>
-                </div>
-              </div>
+        // Render Footer
+        const footerContainer = document.getElementById(
+          "home-footer-container",
+        );
+        footerContainer.innerHTML = "";
+        appState.footerLines.forEach((line) => {
+          const p = document.createElement("p");
+          p.textContent = line;
+          footerContainer.appendChild(p);
+        });
 
-              {/* Navigation Buttons */}
-              <div className="flex flex-wrap gap-2 items-center w-full md:w-auto justify-end">
-                <button
-                  onClick={() => setView("home")}
-                  className={`px-3 py-2 rounded-lg font-medium text-sm transition flex items-center gap-1.5 ${view === "home" ? "bg-primary text-white shadow" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
-                >
-                  <i data-lucide="home" className="w-4 h-4"></i> Home Page
-                </button>
-                <button
-                  onClick={() => setView("editor")}
-                  className={`px-3 py-2 rounded-lg font-medium text-sm transition flex items-center gap-1.5 ${view === "editor" ? "bg-primary text-white shadow" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
-                >
-                  <i data-lucide="settings" className="w-4 h-4"></i> Goal
-                  Editors
-                </button>
-                <button
-                  onClick={() => setView("exit")}
-                  className={`px-3 py-2 rounded-lg font-medium text-sm transition flex items-center gap-1.5 ${view === "exit" ? "bg-red-600 text-white shadow" : "bg-red-50 text-red-600 hover:bg-red-100"}`}
-                >
-                  <i data-lucide="log-out" className="w-4 h-4"></i> Exit Page
-                </button>
-              </div>
-            </header>
+        updateProgressPercentage();
+      }
 
-            {/* VIEW 1: HOME PAGE */}
-            {view === "home" && (
-              <main className="space-y-6">
-                <h1 className="text-3xl font-extrabold text-center uppercase tracking-widest text-primary mb-2">
-                  {appName}
-                </h1>
+      // Handle Checkbox Toggles
+      function handleCheckboxToggle(id, checkbox) {
+        const isChecked = checkbox.checked;
+        localStorage.setItem(`irson_chk_${id}`, isChecked);
+        const textSpan = checkbox.parentElement.querySelector(".goal-text");
+        if (textSpan) {
+          if (isChecked) textSpan.classList.add("line-through", "opacity-60");
+          else textSpan.classList.remove("line-through", "opacity-60");
+        }
+        updateProgressPercentage();
+      }
 
-                {/* Search bar widget */}
-                <div className="flex items-center gap-2 bg-white p-3 rounded-xl shadow-sm border">
-                  <i
-                    data-lucide="search"
-                    className="w-5 h-5 text-slate-400"
-                  ></i>
-                  <input
-                    type="text"
-                    placeholder="Search goals..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-transparent border-none focus:outline-none text-sm"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="text-xs text-slate-400 hover:text-slate-600 font-semibold"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
+      function updateProgressPercentage() {
+        const allCheckboxes = document.querySelectorAll(
+          'input[type="checkbox"][data-id]',
+        );
+        const total = allCheckboxes.length;
+        let checkedCount = 0;
+        allCheckboxes.forEach((cb) => {
+          if (cb.checked) checkedCount++;
+        });
 
-                {/* Personal Goals Section */}
-                <section className="space-y-4">
-                  {filteredGoals.length === 0 ? (
-                    <p className="text-center py-8 text-slate-400 italic">
-                      No goals found matching your search.
-                    </p>
-                  ) : (
-                    filteredGoals.map((goal, index) => (
-                      <div
-                        key={index}
-                        className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-accent flex justify-between items-start gap-4"
-                      >
-                        <p className="text-slate-700 flex-1">
-                          <span className="font-bold text-primary mr-2">
-                            #{goals.indexOf(goal) + 1}
-                          </span>{" "}
-                          {goal}
-                        </p>
-                      </div>
-                    ))
-                  )}
-                </section>
+        const percentage =
+          total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+        document.getElementById("progress-bar").style.width = `${percentage}%`;
+        document.getElementById("progress-text").textContent =
+          `${percentage}% Completed (${checkedCount}/${total})`;
+      }
 
-                {/* Focus Card Section */}
-                <section className="bg-blue-50 border border-blue-200 rounded-xl p-6 my-6">
-                  <h2 className="text-primary font-bold text-lg mb-3">
-                    Achieved by focusing on:
-                  </h2>
-                  <ol className="list-decimal pl-5 space-y-2">
-                    {focusItems.map((item, idx) => (
-                      <li key={idx} className="font-semibold text-slate-900">
-                        {item}
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-
-                {/* Country Rankings Section */}
-                <section className="bg-blue-50 border border-blue-200 rounded-xl p-6 my-6">
-                  <h2 className="text-primary font-bold text-lg mb-4">
-                    Country Rankings for {appName}:
-                  </h2>
-                  <div className="space-y-2">
-                    {countries.map((country, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-white p-3 rounded-lg border border-blue-100 flex items-center shadow-xs"
-                      >
-                        <span className="font-bold text-primary w-8 text-sm">
-                          #{idx + 1}
-                        </span>
-                        <span className="font-medium text-slate-800">
-                          {country}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                {/* Footer */}
-                <footer className="text-center mt-12 py-6 italic text-slate-500 space-y-2 border-t border-slate-200">
-                  {footerTexts.map((text, idx) => (
-                    <p key={idx}>{text}</p>
-                  ))}
-                </footer>
-              </main>
-            )}
-
-            {/* VIEW 2: FULL EDITORS SUITE */}
-            {view === "editor" && (
-              <div className="space-y-8 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100">
-                <div className="border-b pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                  <div>
-                    <h2 className="text-2xl font-bold text-primary">
-                      Advanced Full-Stack Goal Editors
-                    </h2>
-                    <p className="text-sm text-slate-500">
-                      Add, edit, rearrange order up/down, or delete items
-                      instantly. Changes sync with local database state.
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-                    <button
-                      onClick={handleResetDefaults}
-                      className="bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 px-3 py-2 rounded-lg text-sm font-medium transition"
-                    >
-                      Reset to Default
-                    </button>
-                    <button
-                      onClick={() => setView("home")}
-                      className="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium shadow hover:bg-blue-700 transition"
-                    >
-                      Save & Home
-                    </button>
-                  </div>
-                </div>
-
-                {/* 1. Goals Editor */}
-                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
-                  <h3 className="font-bold text-slate-800">
-                    Manage Personal Goals ({goals.length})
-                  </h3>
-                  <div className="space-y-2">
-                    {goals.map((goal, idx) => (
-                      <div
-                        key={idx}
-                        className="flex gap-2 items-center bg-white p-3 rounded-lg border shadow-xs"
-                      >
-                        <span className="text-xs font-bold text-slate-400 w-6">
-                          #{idx + 1}
-                        </span>
-                        <div className="flex flex-col gap-1">
-                          <button
-                            onClick={() => moveItem(goals, setGoals, idx, "up")}
-                            disabled={idx === 0}
-                            className="text-xs bg-slate-100 px-1.5 py-0.5 rounded disabled:opacity-30"
-                          >
-                            ▲
-                          </button>
-                          <button
-                            onClick={() =>
-                              moveItem(goals, setGoals, idx, "down")
-                            }
-                            disabled={idx === goals.length - 1}
-                            className="text-xs bg-slate-100 px-1.5 py-0.5 rounded disabled:opacity-30"
-                          >
-                            ▼
-                          </button>
-                        </div>
-                        <input
-                          type="text"
-                          value={goal}
-                          onChange={(e) => {
-                            const updated = [...goals];
-                            updated[idx] = e.target.value;
-                            setGoals(updated);
-                          }}
-                          className="flex-1 px-3 py-1.5 border rounded text-sm focus:outline-accent"
-                        />
-                        <button
-                          onClick={() =>
-                            setGoals(goals.filter((_, i) => i !== idx))
-                          }
-                          className="bg-red-50 text-red-600 px-3 py-1.5 rounded text-xs font-semibold hover:bg-red-100"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <input
-                      type="text"
-                      placeholder="Add new goal card..."
-                      value={newGoalText}
-                      onChange={(e) => setNewGoalText(e.target.value)}
-                      className="flex-1 px-3 py-2 border rounded text-sm bg-white"
-                    />
-                    <button
-                      onClick={() => {
-                        if (!newGoalText.trim()) return;
-                        setGoals([...goals, newGoalText]);
-                        setNewGoalText("");
-                      }}
-                      className="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
-                    >
-                      Add Goal
-                    </button>
-                  </div>
-                </div>
-
-                {/* 2. Focus Items Editor */}
-                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
-                  <h3 className="font-bold text-slate-800">
-                    Manage Focus Priorities
-                  </h3>
-                  <div className="space-y-2">
-                    {focusItems.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="flex gap-2 items-center bg-white p-3 rounded-lg border shadow-xs"
-                      >
-                        <span className="text-xs font-bold text-slate-400 w-6">
-                          #{idx + 1}
-                        </span>
-                        <div className="flex flex-col gap-1">
-                          <button
-                            onClick={() =>
-                              moveItem(focusItems, setFocusItems, idx, "up")
-                            }
-                            disabled={idx === 0}
-                            className="text-xs bg-slate-100 px-1.5 py-0.5 rounded disabled:opacity-30"
-                          >
-                            ▲
-                          </button>
-                          <button
-                            onClick={() =>
-                              moveItem(focusItems, setFocusItems, idx, "down")
-                            }
-                            disabled={idx === focusItems.length - 1}
-                            className="text-xs bg-slate-100 px-1.5 py-0.5 rounded disabled:opacity-30"
-                          >
-                            ▼
-                          </button>
-                        </div>
-                        <input
-                          type="text"
-                          value={item}
-                          onChange={(e) => {
-                            const updated = [...focusItems];
-                            updated[idx] = e.target.value;
-                            setFocusItems(updated);
-                          }}
-                          className="flex-1 px-3 py-1.5 border rounded text-sm"
-                        />
-                        <button
-                          onClick={() =>
-                            setFocusItems(
-                              focusItems.filter((_, i) => i !== idx),
-                            )
-                          }
-                          className="bg-red-50 text-red-600 px-3 py-1.5 rounded text-xs font-semibold hover:bg-red-100"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <input
-                      type="text"
-                      placeholder="Add new focus item..."
-                      value={newFocusText}
-                      onChange={(e) => setNewFocusText(e.target.value)}
-                      className="flex-1 px-3 py-2 border rounded text-sm bg-white"
-                    />
-                    <button
-                      onClick={() => {
-                        if (!newFocusText.trim()) return;
-                        setFocusItems([...focusItems, newFocusText]);
-                        setNewFocusText("");
-                      }}
-                      className="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
-                    >
-                      Add Focus
-                    </button>
-                  </div>
-                </div>
-
-                {/* 3. Country Rankings Editor */}
-                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
-                  <h3 className="font-bold text-slate-800">
-                    Manage Country Rankings ({countries.length})
-                  </h3>
-                  <div className="space-y-2 max-h-80 overflow-y-auto p-2 border bg-white rounded-lg">
-                    {countries.map((country, idx) => (
-                      <div
-                        key={idx}
-                        className="flex gap-2 items-center p-2 border rounded bg-slate-50"
-                      >
-                        <span className="text-xs font-bold text-slate-400 w-8">
-                          #{idx + 1}.
-                        </span>
-                        <div className="flex flex-col gap-0.5">
-                          <button
-                            onClick={() =>
-                              moveItem(countries, setCountries, idx, "up")
-                            }
-                            disabled={idx === 0}
-                            className="text-[10px] bg-slate-200 px-1 rounded disabled:opacity-30"
-                          >
-                            ▲
-                          </button>
-                          <button
-                            onClick={() =>
-                              moveItem(countries, setCountries, idx, "down")
-                            }
-                            disabled={idx === countries.length - 1}
-                            className="text-[10px] bg-slate-200 px-1 rounded disabled:opacity-30"
-                          >
-                            ▼
-                          </button>
-                        </div>
-                        <input
-                          type="text"
-                          value={country}
-                          onChange={(e) => {
-                            const updated = [...countries];
-                            updated[idx] = e.target.value;
-                            setCountries(updated);
-                          }}
-                          className="flex-1 px-2 py-1 border rounded text-xs bg-white"
-                        />
-                        <button
-                          onClick={() =>
-                            setCountries(countries.filter((_, i) => i !== idx))
-                          }
-                          className="text-red-500 font-bold text-xs px-2 py-1 hover:bg-red-50 rounded"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <input
-                      type="text"
-                      placeholder="Add country (e.g. 🇯🇵 Japan)..."
-                      value={newCountryText}
-                      onChange={(e) => setNewCountryText(e.target.value)}
-                      className="flex-1 px-3 py-2 border rounded text-sm bg-white"
-                    />
-                    <button
-                      onClick={() => {
-                        if (!newCountryText.trim()) return;
-                        setCountries([...countries, newCountryText]);
-                        setNewCountryText("");
-                      }}
-                      className="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
-                    >
-                      Add Country
-                    </button>
-                  </div>
-                </div>
-
-                {/* 4. Footer Editor */}
-                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
-                  <h3 className="font-bold text-slate-800">
-                    Manage Footer Declarations
-                  </h3>
-                  <div className="space-y-2">
-                    {footerTexts.map((text, idx) => (
-                      <div
-                        key={idx}
-                        className="flex gap-2 items-center bg-white p-3 rounded-lg border shadow-xs"
-                      >
-                        <input
-                          type="text"
-                          value={text}
-                          onChange={(e) => {
-                            const updated = [...footerTexts];
-                            updated[idx] = e.target.value;
-                            setFooterTexts(updated);
-                          }}
-                          className="flex-1 px-3 py-1.5 border rounded text-sm"
-                        />
-                        <button
-                          onClick={() =>
-                            setFooterTexts(
-                              footerTexts.filter((_, i) => i !== idx),
-                            )
-                          }
-                          className="bg-red-50 text-red-600 px-3 py-1.5 rounded text-xs font-semibold hover:bg-red-100"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <input
-                      type="text"
-                      placeholder="Add footer text..."
-                      value={newFooterText}
-                      onChange={(e) => setNewFooterText(e.target.value)}
-                      className="flex-1 px-3 py-2 border rounded text-sm bg-white"
-                    />
-                    <button
-                      onClick={() => {
-                        if (!newFooterText.trim()) return;
-                        setFooterTexts([...footerTexts, newFooterText]);
-                        setNewFooterText("");
-                      }}
-                      className="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
-                    >
-                      Add Footer
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* VIEW 3: EXIT PAGE */}
-            {view === "exit" && (
-              <div className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100 text-center space-y-6 mt-12">
-                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
-                  ✓
-                </div>
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Application Saved Successfully
-                </h2>
-                <p className="text-slate-500 text-sm">
-                  All changes to goals, focus priorities, country rankings, and
-                  footers have been safely stored in your browser's persistent
-                  localStorage database.
-                </p>
-                <div className="flex flex-col gap-3 pt-4">
-                  <button
-                    onClick={() => setView("home")}
-                    className="w-full bg-primary text-white py-2.5 rounded-lg font-medium shadow hover:bg-blue-900 transition"
-                  >
-                    Return to Home Page
-                  </button>
-                  <button
-                    onClick={() => setView("editor")}
-                    className="w-full bg-slate-100 text-slate-700 py-2.5 rounded-lg font-medium hover:bg-slate-200 transition"
-                  >
-                    Back to Goal Editors
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+      // Reset Progress Button
+      function resetProgress() {
+        showNotification(
+          "Reset Progress",
+          "Are you sure you want to reset all completion checkmarks back to normal?",
+          true,
+          () => {
+            const keys = Object.keys(localStorage);
+            keys.forEach((k) => {
+              if (
+                k.startsWith("irson_chk_goal-") ||
+                k.startsWith("irson_chk_focus-")
+              ) {
+                localStorage.removeItem(k);
+              }
+            });
+            renderHome();
+          },
         );
       }
 
-      ReactDOM.render(<App />, document.getElementById("root"));
+      // Search Filter
+      function handleSearch(query) {
+        renderHome(query);
+      }
+
+      // ==================== EDITORS WITH REARRANGE ORDER BUTTONS ====================
+
+      function populateEditorLists() {
+        document.getElementById("edit-app-title").value = appState.appTitle;
+
+        renderEditorList("goals", "editor-goals-list", "Goal statement...");
+        renderEditorList("focusCards", "editor-focus-list", "Focus area...");
+        renderEditorList(
+          "countryRankings",
+          "editor-rankings-list",
+          "Country name...",
+        );
+        renderEditorList(
+          "footerLines",
+          "editor-footer-list",
+          "Footer description line...",
+        );
+      }
+
+      function renderEditorList(category, containerId, placeholderText) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        appState[category].forEach((itemValue, idx) => {
+          const row = document.createElement("div");
+          row.className =
+            "flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-200 dark:border-slate-700";
+          row.innerHTML = `
+                    <span class="text-xs font-bold text-slate-400 w-6 text-center">#${idx + 1}</span>
+                    <input type="text" data-category="${category}" data-index="${idx}" value="${itemValue}" placeholder="${placeholderText}" class="flex-1 p-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500">
+                    
+                    <!-- Up & Down Rearrange Buttons -->
+                    <div class="flex items-center gap-1">
+                        <button onclick="moveItem('${category}', ${idx}, -1)" title="Move Up" class="p-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-blue-600 hover:text-white text-xs transition">⬆</button>
+                        <button onclick="moveItem('${category}', ${idx}, 1)" title="Move Down" class="p-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-blue-600 hover:text-white text-xs transition">⬇️</button>
+                        <button onclick="deleteItem('${category}', ${idx})" title="Delete" class="p-1.5 bg-rose-500/10 text-rose-600 rounded-md hover:bg-rose-500 hover:text-white text-xs transition ml-1">🗑️</button>
+                    </div>
+                `;
+          container.appendChild(row);
+        });
+      }
+
+      function syncEditorInputsFromDOM() {
+        const inputs = document.querySelectorAll(
+          "#view-editor input[data-category]",
+        );
+        inputs.forEach((input) => {
+          const cat = input.getAttribute("data-category");
+          const idx = parseInt(input.getAttribute("data-index"));
+          if (appState[cat] && appState[cat][idx] !== undefined) {
+            appState[cat][idx] = input.value;
+          }
+        });
+        appState.appTitle = document.getElementById("edit-app-title").value;
+      }
+
+      function moveItem(category, index, direction) {
+        syncEditorInputsFromDOM();
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= appState[category].length) return;
+
+        const temp = appState[category][index];
+        appState[category][index] = appState[category][newIndex];
+        appState[category][newIndex] = temp;
+
+        populateEditorLists();
+      }
+
+      function addItem(category) {
+        syncEditorInputsFromDOM();
+        let defaultText = "New item statement...";
+        if (category === "countryRankings") defaultText = "🇺🇸 New Country";
+        appState[category].push(defaultText);
+        populateEditorLists();
+      }
+
+      function deleteItem(category, index) {
+        syncEditorInputsFromDOM();
+        if (appState[category].length <= 1) {
+          showNotification(
+            "Action Denied",
+            "You must keep at least one item in this section.",
+          );
+          return;
+        }
+        appState[category].splice(index, 1);
+        populateEditorLists();
+      }
+
+      function saveChanges() {
+        syncEditorInputsFromDOM();
+        localStorage.setItem("irson_master_db", JSON.stringify(appState));
+        showNotification(
+          "Success",
+          "All changes successfully saved to database!",
+        );
+        switchView("home");
+      }
     </script>
   </body>
 </html>
