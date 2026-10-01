@@ -26,7 +26,6 @@
       body {
         font-family: "Inter", sans-serif;
       }
-      /* Custom modal overlay styling to avoid standard alerts */
       .custom-modal-backdrop {
         background-color: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(4px);
@@ -36,6 +35,7 @@
   <body
     class="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 min-h-screen transition-colors duration-300 py-10 px-4 sm:px-6"
   >
+    <!-- Custom Safe Notification Box -->
     <div
       id="notification-modal"
       class="fixed inset-0 custom-modal-backdrop z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300"
@@ -64,7 +64,6 @@
         ></p>
         <div id="notification-actions" class="flex justify-end gap-2">
           <button
-            id="notification-btn-ok"
             onclick="closeNotification()"
             class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow transition"
           >
@@ -73,6 +72,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Hidden File Input for Importing Backups -->
+    <input
+      type="file"
+      id="import-file-input"
+      accept=".json"
+      class="hidden"
+      onchange="handleFileImport(event)"
+    />
 
     <header class="max-w-3xl mx-auto flex justify-between items-center mb-8">
       <div class="flex items-center space-x-2">
@@ -83,22 +91,18 @@
         >
       </div>
       <div class="flex items-center gap-2">
-        <!-- Navigation Switcher Buttons -->
         <button
-          id="btn-nav-home"
           onclick="switchView('home')"
           class="px-3 py-2 rounded-xl bg-blue-600 text-white font-medium text-sm shadow hover:bg-blue-700 transition flex items-center gap-1"
         >
           🏠 Home
         </button>
         <button
-          id="btn-nav-editor"
           onclick="switchView('editor')"
           class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium text-sm shadow-sm hover:bg-slate-300 dark:hover:bg-slate-700 transition flex items-center gap-1"
         >
           ⚙️ Editors
         </button>
-        <!-- Theme Toggle Button -->
         <button
           id="theme-toggle"
           aria-label="Toggle Dark Mode"
@@ -244,22 +248,31 @@
                 🛠️ Full App Management & Editors
               </h2>
               <p class="text-xs text-slate-500">
-                Edit titles, text items, rearrange orders up/down, add new
-                cards, or delete items.
+                Edit titles, text items, rearrange orders, export/import JSON
+                backups, or reset to defaults.
               </p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <button
-                onclick="saveChanges()"
-                class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-emerald-700 transition flex items-center gap-1"
+                onclick="exportJSONBackup()"
+                class="px-3 py-2 bg-purple-600 text-white rounded-xl text-xs font-semibold shadow hover:bg-purple-700 transition flex items-center gap-1"
+                title="Download JSON Backup"
               >
-                💾 Save Changes
+                📥 Export Backup
               </button>
               <button
-                onclick="switchView('home')"
-                class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-300 transition"
+                onclick="triggerImport()"
+                class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold shadow hover:bg-indigo-700 transition flex items-center gap-1"
+                title="Upload JSON Backup"
               >
-                ❌ Exit Page
+                📤 Import Backup
+              </button>
+              <button
+                onclick="resetToDefaultData()"
+                class="px-3 py-2 bg-amber-600 text-white rounded-xl text-xs font-semibold shadow hover:bg-amber-700 transition flex items-center gap-1"
+                title="Reset Database to Factory Defaults"
+              >
+                ⚠️ Reset Factory
               </button>
             </div>
           </div>
@@ -370,7 +383,7 @@
             </button>
             <button
               onclick="saveChanges()"
-              class="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-blue-700"
+              class="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-emerald-700"
             >
               💾 Save Changes
             </button>
@@ -460,7 +473,6 @@
         ],
       };
 
-      // Load Persistent Store from LocalStorage
       let appState =
         JSON.parse(localStorage.getItem("irson_master_db")) || defaultAppData;
       let activeConfirmCallback = null;
@@ -470,7 +482,6 @@
         renderHome();
       });
 
-      // Custom Safe Notification Box (replaces alert/confirm)
       function showNotification(
         title,
         message,
@@ -526,7 +537,6 @@
         }, 300);
       }
 
-      // Theme Controller
       function initTheme() {
         const htmlElement = document.documentElement;
         const savedTheme = localStorage.getItem("irson_theme");
@@ -553,7 +563,6 @@
           });
       }
 
-      // View Navigation Switcher
       function switchView(viewName) {
         const homeView = document.getElementById("view-home");
         const editorView = document.getElementById("view-editor");
@@ -572,14 +581,12 @@
         }
       }
 
-      // Render Home Dashboard
       function renderHome(searchFilter = "") {
         document.getElementById("header-brand-title").textContent =
           appState.appTitle;
         document.getElementById("main-title-display").textContent =
           appState.appTitle;
 
-        // Render Goals
         const goalsContainer = document.getElementById("home-goals-container");
         goalsContainer.innerHTML = "";
         appState.goals.forEach((goalText, index) => {
@@ -605,7 +612,6 @@
           goalsContainer.appendChild(card);
         });
 
-        // Render Focus Cards
         const focusContainer = document.getElementById("home-focus-container");
         focusContainer.innerHTML = "";
         appState.focusCards.forEach((focusText, index) => {
@@ -628,7 +634,6 @@
           focusContainer.appendChild(li);
         });
 
-        // Render Country Rankings
         const rankingsContainer = document.getElementById(
           "home-rankings-container",
         );
@@ -641,7 +646,6 @@
           rankingsContainer.appendChild(row);
         });
 
-        // Render Footer
         const footerContainer = document.getElementById(
           "home-footer-container",
         );
@@ -655,7 +659,6 @@
         updateProgressPercentage();
       }
 
-      // Handle Checkbox Toggles
       function handleCheckboxToggle(id, checkbox) {
         const isChecked = checkbox.checked;
         localStorage.setItem(`irson_chk_${id}`, isChecked);
@@ -684,7 +687,6 @@
           `${percentage}% Completed (${checkedCount}/${total})`;
       }
 
-      // Reset Progress Button
       function resetProgress() {
         showNotification(
           "Reset Progress",
@@ -705,13 +707,94 @@
         );
       }
 
-      // Search Filter
+      function resetToDefaultData() {
+        showNotification(
+          "Factory Reset",
+          "Are you sure you want to restore all default goals, rankings, and text? Custom changes will be cleared.",
+          true,
+          () => {
+            appState = JSON.parse(JSON.stringify(defaultAppData));
+            localStorage.setItem(
+              "irson_master_db",
+              JSON.stringify(defaultAppData),
+            );
+            populateEditorLists();
+            renderHome();
+            showNotification(
+              "Reset Complete",
+              "Database restored to original defaults.",
+            );
+          },
+        );
+      }
+
       function handleSearch(query) {
         renderHome(query);
       }
 
-      // ==================== EDITORS WITH REARRANGE ORDER BUTTONS ====================
+      // JSON BACKUP EXPORT & IMPORT FUNCTIONS
+      function exportJSONBackup() {
+        syncEditorInputsFromDOM();
+        const dataStr =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(appState, null, 2));
+        const downloadAnchor = document.createElement("a");
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute(
+          "download",
+          `irsons_goal_backup_${new Date().toISOString().slice(0, 10)}.json`,
+        );
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        showNotification(
+          "Export Successful",
+          "Your suite backup JSON file has been downloaded.",
+        );
+      }
 
+      function triggerImport() {
+        document.getElementById("import-file-input").click();
+      }
+
+      function handleFileImport(event) {
+        const fileReader = new FileReader();
+        if (event.target.files[0]) {
+          fileReader.readAsText(event.target.files[0], "UTF-8");
+          fileReader.onload = (e) => {
+            try {
+              const importedData = JSON.parse(e.target.result);
+              if (
+                importedData &&
+                Array.isArray(importedData.goals) &&
+                Array.isArray(importedData.focusCards)
+              ) {
+                appState = importedData;
+                localStorage.setItem(
+                  "irson_master_db",
+                  JSON.stringify(appState),
+                );
+                populateEditorLists();
+                renderHome();
+                showNotification(
+                  "Import Successful",
+                  "All goals, focus items, and rankings have been loaded from your backup file!",
+                );
+              } else {
+                throw new Error("Invalid structure");
+              }
+            } catch (err) {
+              showNotification(
+                "Import Error",
+                "The selected file is not a valid backup JSON file for this application.",
+              );
+            }
+            event.target.value = ""; // clear file input
+          };
+        }
+      }
+
+      // EDITORS WITH REARRANGE ORDER BUTTONS
       function populateEditorLists() {
         document.getElementById("edit-app-title").value = appState.appTitle;
 
@@ -741,7 +824,6 @@
                     <span class="text-xs font-bold text-slate-400 w-6 text-center">#${idx + 1}</span>
                     <input type="text" data-category="${category}" data-index="${idx}" value="${itemValue}" placeholder="${placeholderText}" class="flex-1 p-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500">
                     
-                    <!-- Up & Down Rearrange Buttons -->
                     <div class="flex items-center gap-1">
                         <button onclick="moveItem('${category}', ${idx}, -1)" title="Move Up" class="p-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-blue-600 hover:text-white text-xs transition">⬆</button>
                         <button onclick="moveItem('${category}', ${idx}, 1)" title="Move Down" class="p-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-blue-600 hover:text-white text-xs transition">⬇️</button>
@@ -804,9 +886,11 @@
         localStorage.setItem("irson_master_db", JSON.stringify(appState));
         showNotification(
           "Success",
-          "All changes successfully saved to database!",
+          "All changes have been successfully saved!",
         );
-        switchView("home");
+        setTimeout(() => {
+          switchView("home");
+        }, 800);
       }
     </script>
   </body>
