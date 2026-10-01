@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doa Irson - Full-Stack Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1e3a8a",
+              accent: "#2563eb",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .custom-modal-backdrop {
+        background-color: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 min-h-screen transition-colors duration-300 py-10 px-4 sm:px-6"
+  >
+    <!-- Custom Safe Notification Box -->
+    <div
+      id="notification-modal"
+      class="fixed inset-0 custom-modal-backdrop z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl transform scale-95 transition-transform duration-300"
+        id="notification-card"
+      >
+        <div class="flex items-center gap-3 mb-3">
+          <div
+            id="notification-icon"
+            class="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-lg"
+          >
+            💡
+          </div>
+          <h3
+            id="notification-title"
+            class="font-bold text-lg text-slate-900 dark:text-white"
+          >
+            Notice
+          </h3>
+        </div>
+        <p
+          id="notification-message"
+          class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed"
+        ></p>
+        <div id="notification-actions" class="flex justify-end gap-2">
+          <button
+            onclick="closeNotification()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow transition"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden File Input for Importing Backups -->
+    <input
+      type="file"
+      id="import-file-input"
+      accept=".json"
+      class="hidden"
+      onchange="handleFileImport(event)"
+    />
+
+    <header class="max-w-3xl mx-auto flex justify-between items-center mb-8">
+      <div class="flex items-center space-x-2">
+        <span
+          id="header-brand-title"
+          class="text-xl sm:text-2xl font-bold tracking-wider text-blue-900 dark:text-blue-400 uppercase"
+          >Doa Irson</span
+        >
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          onclick="switchView('home')"
+          class="px-3 py-2 rounded-xl bg-blue-600 text-white font-medium text-sm shadow hover:bg-blue-700 transition flex items-center gap-1"
+        >
+          🏠 Home
+        </button>
+        <button
+          onclick="switchView('editor')"
+          class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium text-sm shadow-sm hover:bg-slate-300 dark:hover:bg-slate-700 transition flex items-center gap-1"
+        >
+          ⚙️ Editors
+        </button>
+        <button
+          id="theme-toggle"
+          aria-label="Toggle Dark Mode"
+          class="p-2.5 rounded-full bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+        >
+          <svg
+            id="theme-icon-light"
+            class="w-5 h-5 hidden dark:block"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            ></path>
+          </svg>
+          <svg
+            id="theme-icon-dark"
+            class="w-5 h-5 block dark:hidden"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto space-y-8">
+      <!-- ==================== VIEW 1: HOME DASHBOARD ==================== -->
+      <div id="view-home" class="space-y-8">
+        <!-- Search & Control Bar -->
+        <div
+          class="flex flex-col sm:flex-row gap-3 justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <div class="w-full sm:w-72 relative">
+            <input
+              type="text"
+              id="search-input"
+              oninput="handleSearch(this.value)"
+              placeholder="Search goals or focus items..."
+              class="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm border-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200"
+            />
+            <span class="absolute left-3 top-2.5 text-slate-400">🔍</span>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <button
+              onclick="resetProgress()"
+              class="px-4 py-2 text-sm font-semibold rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition flex items-center gap-1"
+            >
+              🔄 Reset Progress
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Card -->
+        <section
+          class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-800"
+        >
+          <div class="flex justify-between items-center mb-3">
+            <h2
+              class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wide"
+            >
+              Goal Progress
+            </h2>
+            <span
+              id="progress-text"
+              class="text-sm font-semibold text-blue-600 dark:text-blue-400"
+              >0% Completed</span
+            >
+          </div>
+          <div
+            class="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden"
+          >
+            <div
+              id="progress-bar"
+              class="bg-blue-600 h-full rounded-full transition-all duration-500 w-0"
+            ></div>
+          </div>
+        </section>
+
+        <!-- Goals Container -->
+        <section aria-label="Personal Goals" class="space-y-4">
+          <h1
+            id="main-title-display"
+            class="text-2xl sm:text-3xl font-extrabold text-center uppercase text-blue-900 dark:text-blue-400 tracking-wider mb-6"
+          >
+            Doa Irson
+          </h1>
+          <div id="home-goals-container" class="space-y-4"></div>
+        </section>
+
+        <!-- Focus Cards Container -->
+        <section
+          class="bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm"
+        >
+          <h2 class="text-blue-900 dark:text-blue-400 font-bold text-lg mb-4">
+            Irson mau fokus belajar:
+          </h2>
+          <ol id="home-focus-container" class="space-y-3"></ol>
+        </section>
+
+        <!-- Country Rankings Container -->
+        <section
+          class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm"
+        >
+          <h2
+            class="text-blue-900 dark:text-blue-400 font-bold text-lg mb-4"
+          ></h2>
+          <div
+            id="home-rankings-container"
+            class="flex flex-col gap-2 font-medium text-slate-700 dark:text-slate-300"
+          ></div>
+        </section>
+
+        <!-- Footer Container -->
+        <footer
+          id="home-footer-container"
+          class="text-center italic text-slate-500 dark:text-slate-400 space-y-2 pt-4 pb-8 border-t border-slate-200 dark:border-slate-800"
+        ></footer>
+      </div>
+
+      <!-- ==================== VIEW 2: EDITORS SUITE ==================== -->
+      <div id="view-editor" class="space-y-8 hidden">
+        <div
+          class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6"
+        >
+          <!-- Header Toolbar in Editor -->
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4"
+          >
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+                🛠️ Full App Management & Editors
+              </h2>
+              <p class="text-xs text-slate-500">
+                Edit titles, text items, rearrange orders, export/import JSON
+                backups, or reset to defaults.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                onclick="exportJSONBackup()"
+                class="px-3 py-2 bg-purple-600 text-white rounded-xl text-xs font-semibold shadow hover:bg-purple-700 transition flex items-center gap-1"
+                title="Download JSON Backup"
+              >
+                📥 Export Backup
+              </button>
+              <button
+                onclick="triggerImport()"
+                class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold shadow hover:bg-indigo-700 transition flex items-center gap-1"
+                title="Upload JSON Backup"
+              >
+                📤 Import Backup
+              </button>
+              <button
+                onclick="resetToDefaultData()"
+                class="px-3 py-2 bg-amber-600 text-white rounded-xl text-xs font-semibold shadow hover:bg-amber-700 transition flex items-center gap-1"
+                title="Reset Database to Factory Defaults"
+              >
+                ⚠️ Reset Factory
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. Name / Title Editor -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+              >Application Name / Title Editor:</label
+            >
+            <input
+              type="text"
+              id="edit-app-title"
+              class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
+            />
+          </div>
+
+          <!-- 2. Goals Editor with Rearrange Buttons -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <label
+                class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+                >Goal Cards Editor (Rearrange / Add / Delete):</label
+              >
+              <button
+                onclick="addItem('goals')"
+                class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                + Add Goal
+              </button>
+            </div>
+            <div
+              id="editor-goals-list"
+              class="space-y-2 max-h-72 overflow-y-auto pr-1"
+            ></div>
+          </div>
+
+          <!-- 3. Focus Cards Editor with Rearrange Buttons -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <label
+                class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+                >Focus Cards Editor (Rearrange / Add / Delete):</label
+              >
+              <button
+                onclick="addItem('focusCards')"
+                class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                + Add Focus
+              </button>
+            </div>
+            <div
+              id="editor-focus-list"
+              class="space-y-2 max-h-52 overflow-y-auto pr-1"
+            ></div>
+          </div>
+
+          <!-- 4. Country Rankings Editor with Rearrange Buttons -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <label
+                class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+                >Country Rankings Editor (1 per row, Rearrange / Add /
+                Delete):</label
+              >
+              <button
+                onclick="addItem('countryRankings')"
+                class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                + Add Country
+              </button>
+            </div>
+            <div
+              id="editor-rankings-list"
+              class="space-y-2 max-h-60 overflow-y-auto pr-1"
+            ></div>
+          </div>
+
+          <!-- 5. Footer Lines Editor with Rearrange Buttons -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <label
+                class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+                >Footer Statements Editor (Rearrange / Add / Delete):</label
+              >
+              <button
+                onclick="addItem('footerLines')"
+                class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                + Add Footer Line
+              </button>
+            </div>
+            <div
+              id="editor-footer-list"
+              class="space-y-2 max-h-48 overflow-y-auto pr-1"
+            ></div>
+          </div>
+
+          <!-- Bottom Save & Exit Actions -->
+          <div
+            class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800"
+          >
+            <button
+              onclick="switchView('home')"
+              class="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              Exit Page
+            </button>
+            <button
+              onclick="saveChanges()"
+              class="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-emerald-700"
+            >
+              💾 Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const defaultAppData = {
+        appTitle: "Doa Irson",
+        goals: [
+          "Telinga Irson semuanya good listening, sembuh, bisa mendengar lebih jelas, dan normal.",
+          "Tubuh Irson semuanya lengkap, sempurna, berfungsi dengan baik, dan normal.",
+          "Single, tidak ada cewek, tinggal bareng papi, mami, dan Kelly, gak usah pikir cewek lagi.",
+          "Tuhan sudah kasih kita tinggal di negara yang paling bagus untuk kita adalah tinggal di Amerika (United States), gak usah pindah, gak usah pikir negara lain lagi.",
+        ],
+        focusCards: ["Web Development", "English", "Mandarin Chinese"],
+        countryRankings: [],
+        footerLines: ["Jangan pikir Irson's Goal terus"],
+      };
+
+      let appState =
+        JSON.parse(localStorage.getItem("irson_master_db")) || defaultAppData;
+      let activeConfirmCallback = null;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initTheme();
+        renderHome();
+      });
+
+      function showNotification(
+        title,
+        message,
+        isConfirm = false,
+        onConfirm = null,
+      ) {
+        const modal = document.getElementById("notification-modal");
+        const card = document.getElementById("notification-card");
+        const titleEl = document.getElementById("notification-title");
+        const msgEl = document.getElementById("notification-message");
+        const actionsEl = document.getElementById("notification-actions");
+        const iconEl = document.getElementById("notification-icon");
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        activeConfirmCallback = onConfirm;
+
+        if (isConfirm) {
+          iconEl.textContent = "⚠️";
+          actionsEl.innerHTML = `
+                    <button onclick="closeNotification(false)" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-300 transition">Cancel</button>
+                    <button onclick="closeNotification(true)" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-semibold shadow transition">Confirm</button>
+                `;
+        } else {
+          iconEl.textContent = "✨";
+          actionsEl.innerHTML = `
+                    <button onclick="closeNotification(false)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow transition">Got it</button>
+                `;
+        }
+
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          card.classList.remove("scale-95");
+          card.classList.add("scale-100");
+        }, 10);
+      }
+
+      function closeNotification(confirmed = false) {
+        const modal = document.getElementById("notification-modal");
+        const card = document.getElementById("notification-card");
+
+        modal.classList.add("opacity-0");
+        card.classList.remove("scale-100");
+        card.classList.add("scale-95");
+
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          if (confirmed && typeof activeConfirmCallback === "function") {
+            activeConfirmCallback();
+          }
+          activeConfirmCallback = null;
+        }, 300);
+      }
+
+      function initTheme() {
+        const htmlElement = document.documentElement;
+        const savedTheme = localStorage.getItem("irson_theme");
+        if (
+          savedTheme === "dark" ||
+          (!savedTheme &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          htmlElement.classList.add("dark");
+        } else {
+          htmlElement.classList.remove("dark");
+        }
+
+        document
+          .getElementById("theme-toggle")
+          .addEventListener("click", () => {
+            if (htmlElement.classList.contains("dark")) {
+              htmlElement.classList.remove("dark");
+              localStorage.setItem("irson_theme", "light");
+            } else {
+              htmlElement.classList.add("dark");
+              localStorage.setItem("irson_theme", "dark");
+            }
+          });
+      }
+
+      function switchView(viewName) {
+        const homeView = document.getElementById("view-home");
+        const editorView = document.getElementById("view-editor");
+
+        if (viewName === "editor") {
+          syncEditorInputsFromDOM();
+          homeView.classList.add("hidden");
+          editorView.classList.remove("hidden");
+          populateEditorLists();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          editorView.classList.add("hidden");
+          homeView.classList.remove("hidden");
+          renderHome();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      function renderHome(searchFilter = "") {
+        document.getElementById("header-brand-title").textContent =
+          appState.appTitle;
+        document.getElementById("main-title-display").textContent =
+          appState.appTitle;
+
+        const goalsContainer = document.getElementById("home-goals-container");
+        goalsContainer.innerHTML = "";
+        appState.goals.forEach((goalText, index) => {
+          const goalId = `goal-${index + 1}`;
+          const isChecked =
+            localStorage.getItem(`irson_chk_${goalId}`) === "true";
+
+          if (
+            searchFilter &&
+            !goalText.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+            return;
+
+          const card = document.createElement("div");
+          card.className =
+            "goal-card bg-white dark:bg-slate-900 rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 border-l-4 border-l-blue-600 transition hover:shadow-md";
+          card.innerHTML = `
+                    <label class="flex items-start gap-4 cursor-pointer">
+                        <input type="checkbox" data-id="${goalId}" ${isChecked ? "checked" : ""} onchange="handleCheckboxToggle('${goalId}', this)" class="mt-1 w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800">
+                        <span class="goal-text text-slate-700 dark:text-slate-300 ${isChecked ? "line-through opacity-60" : ""}">${goalText}</span>
+                    </label>
+                `;
+          goalsContainer.appendChild(card);
+        });
+
+        const focusContainer = document.getElementById("home-focus-container");
+        focusContainer.innerHTML = "";
+        appState.focusCards.forEach((focusText, index) => {
+          const focusId = `focus-${index + 1}`;
+          const isChecked =
+            localStorage.getItem(`irson_chk_${focusId}`) === "true";
+
+          if (
+            searchFilter &&
+            !focusText.toLowerCase().includes(searchFilter.toLowerCase())
+          )
+            return;
+
+          const li = document.createElement("li");
+          li.className = "flex items-center gap-3";
+          li.innerHTML = `
+                    <input type="checkbox" data-id="${focusId}" ${isChecked ? "checked" : ""} onchange="handleCheckboxToggle('${focusId}', this)" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800">
+                    <span class="goal-text font-semibold text-slate-900 dark:text-slate-200 ${isChecked ? "line-through opacity-60" : ""}">${focusText}</span>
+                `;
+          focusContainer.appendChild(li);
+        });
+
+        const rankingsContainer = document.getElementById(
+          "home-rankings-container",
+        );
+        rankingsContainer.innerHTML = "";
+        appState.countryRankings.forEach((country, index) => {
+          const row = document.createElement("div");
+          row.className =
+            "py-2 px-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 flex items-center gap-3 text-sm";
+          row.innerHTML = `<span class="font-bold text-blue-600 dark:text-blue-400 w-8">#${index + 1}</span> <span>${country}</span>`;
+          rankingsContainer.appendChild(row);
+        });
+
+        const footerContainer = document.getElementById(
+          "home-footer-container",
+        );
+        footerContainer.innerHTML = "";
+        appState.footerLines.forEach((line) => {
+          const p = document.createElement("p");
+          p.textContent = line;
+          footerContainer.appendChild(p);
+        });
+
+        updateProgressPercentage();
+      }
+
+      function handleCheckboxToggle(id, checkbox) {
+        const isChecked = checkbox.checked;
+        localStorage.setItem(`irson_chk_${id}`, isChecked);
+        const textSpan = checkbox.parentElement.querySelector(".goal-text");
+        if (textSpan) {
+          if (isChecked) textSpan.classList.add("line-through", "opacity-60");
+          else textSpan.classList.remove("line-through", "opacity-60");
+        }
+        updateProgressPercentage();
+      }
+
+      function updateProgressPercentage() {
+        const allCheckboxes = document.querySelectorAll(
+          'input[type="checkbox"][data-id]',
+        );
+        const total = allCheckboxes.length;
+        let checkedCount = 0;
+        allCheckboxes.forEach((cb) => {
+          if (cb.checked) checkedCount++;
+        });
+
+        const percentage =
+          total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+        document.getElementById("progress-bar").style.width = `${percentage}%`;
+        document.getElementById("progress-text").textContent =
+          `${percentage}% Completed (${checkedCount}/${total})`;
+      }
+
+      function resetProgress() {
+        showNotification(
+          "Reset Progress",
+          "Are you sure you want to reset all completion checkmarks back to normal?",
+          true,
+          () => {
+            const keys = Object.keys(localStorage);
+            keys.forEach((k) => {
+              if (
+                k.startsWith("irson_chk_goal-") ||
+                k.startsWith("irson_chk_focus-")
+              ) {
+                localStorage.removeItem(k);
+              }
+            });
+            renderHome();
+          },
+        );
+      }
+
+      function resetToDefaultData() {
+        showNotification(
+          "Factory Reset",
+          "Are you sure you want to restore all default goals, rankings, and text? Custom changes will be cleared.",
+          true,
+          () => {
+            appState = JSON.parse(JSON.stringify(defaultAppData));
+            localStorage.setItem(
+              "irson_master_db",
+              JSON.stringify(defaultAppData),
+            );
+            populateEditorLists();
+            renderHome();
+            showNotification(
+              "Reset Complete",
+              "Database restored to original defaults.",
+            );
+          },
+        );
+      }
+
+      function handleSearch(query) {
+        renderHome(query);
+      }
+
+      // JSON BACKUP EXPORT & IMPORT FUNCTIONS
+      function exportJSONBackup() {
+        syncEditorInputsFromDOM();
+        const dataStr =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(appState, null, 2));
+        const downloadAnchor = document.createElement("a");
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute(
+          "download",
+          `irsons_goal_backup_${new Date().toISOString().slice(0, 10)}.json`,
+        );
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        showNotification(
+          "Export Successful",
+          "Your suite backup JSON file has been downloaded.",
+        );
+      }
+
+      function triggerImport() {
+        document.getElementById("import-file-input").click();
+      }
+
+      function handleFileImport(event) {
+        const fileReader = new FileReader();
+        if (event.target.files[0]) {
+          fileReader.readAsText(event.target.files[0], "UTF-8");
+          fileReader.onload = (e) => {
+            try {
+              const importedData = JSON.parse(e.target.result);
+              if (
+                importedData &&
+                Array.isArray(importedData.goals) &&
+                Array.isArray(importedData.focusCards)
+              ) {
+                appState = importedData;
+                localStorage.setItem(
+                  "irson_master_db",
+                  JSON.stringify(appState),
+                );
+                populateEditorLists();
+                renderHome();
+                showNotification(
+                  "Import Successful",
+                  "All goals, focus items, and rankings have been loaded from your backup file!",
+                );
+              } else {
+                throw new Error("Invalid structure");
+              }
+            } catch (err) {
+              showNotification(
+                "Import Error",
+                "The selected file is not a valid backup JSON file for this application.",
+              );
+            }
+            event.target.value = ""; // clear file input
+          };
+        }
+      }
+
+      // EDITORS WITH REARRANGE ORDER BUTTONS
+      function populateEditorLists() {
+        document.getElementById("edit-app-title").value = appState.appTitle;
+
+        renderEditorList("goals", "editor-goals-list", "Goal statement...");
+        renderEditorList("focusCards", "editor-focus-list", "Focus area...");
+        renderEditorList(
+          "countryRankings",
+          "editor-rankings-list",
+          "Country name...",
+        );
+        renderEditorList(
+          "footerLines",
+          "editor-footer-list",
+          "Footer description line...",
+        );
+      }
+
+      function renderEditorList(category, containerId, placeholderText) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        appState[category].forEach((itemValue, idx) => {
+          const row = document.createElement("div");
+          row.className =
+            "flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-200 dark:border-slate-700";
+          row.innerHTML = `
+                    <span class="text-xs font-bold text-slate-400 w-6 text-center">#${idx + 1}</span>
+                    <input type="text" data-category="${category}" data-index="${idx}" value="${itemValue}" placeholder="${placeholderText}" class="flex-1 p-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500">
+                    
+                    <div class="flex items-center gap-1">
+                        <button onclick="moveItem('${category}', ${idx}, -1)" title="Move Up" class="p-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-blue-600 hover:text-white text-xs transition">⬆</button>
+                        <button onclick="moveItem('${category}', ${idx}, 1)" title="Move Down" class="p-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-blue-600 hover:text-white text-xs transition">⬇️</button>
+                        <button onclick="deleteItem('${category}', ${idx})" title="Delete" class="p-1.5 bg-rose-500/10 text-rose-600 rounded-md hover:bg-rose-500 hover:text-white text-xs transition ml-1">🗑️</button>
+                    </div>
+                `;
+          container.appendChild(row);
+        });
+      }
+
+      function syncEditorInputsFromDOM() {
+        const inputs = document.querySelectorAll(
+          "#view-editor input[data-category]",
+        );
+        inputs.forEach((input) => {
+          const cat = input.getAttribute("data-category");
+          const idx = parseInt(input.getAttribute("data-index"));
+          if (appState[cat] && appState[cat][idx] !== undefined) {
+            appState[cat][idx] = input.value;
+          }
+        });
+        appState.appTitle = document.getElementById("edit-app-title").value;
+      }
+
+      function moveItem(category, index, direction) {
+        syncEditorInputsFromDOM();
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= appState[category].length) return;
+
+        const temp = appState[category][index];
+        appState[category][index] = appState[category][newIndex];
+        appState[category][newIndex] = temp;
+
+        populateEditorLists();
+      }
+
+      function addItem(category) {
+        syncEditorInputsFromDOM();
+        let defaultText = "New item statement...";
+        if (category === "countryRankings") defaultText = "🇺🇸 New Country";
+        appState[category].push(defaultText);
+        populateEditorLists();
+      }
+
+      function deleteItem(category, index) {
+        syncEditorInputsFromDOM();
+        if (appState[category].length <= 1) {
+          showNotification(
+            "Action Denied",
+            "You must keep at least one item in this section.",
+          );
+          return;
+        }
+        appState[category].splice(index, 1);
+        populateEditorLists();
+      }
+
+      function saveChanges() {
+        syncEditorInputsFromDOM();
+        localStorage.setItem("irson_master_db", JSON.stringify(appState));
+        showNotification(
+          "Success",
+          "All changes have been successfully saved!",
+        );
+        setTimeout(() => {
+          switchView("home");
+        }, 800);
+      }
+    </script>
+  </body>
+</html>
