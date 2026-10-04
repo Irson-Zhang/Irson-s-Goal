@@ -3,624 +3,139 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Irson’s Goal Dashboard</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <title>Doa Irson</title>
     <style>
+      :root {
+        --primary-color: #1e3a8a;
+        --accent-color: #2563eb;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-color: #334155;
+        --heading-color: #0f172a;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
       body {
-        font-family: "Inter", sans-serif;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Oxygen,
+          Ubuntu,
+          Cantarell,
+          "Open Sans",
+          "Helvetica Neue",
+          sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        padding: 40px 20px;
       }
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
+
+      .container {
+        max-width: 700px;
+        margin: 0 auto;
       }
-      ::-webkit-scrollbar-track {
-        background: #0f172a;
+
+      h1 {
+        text-align: center;
+        text-transform: uppercase;
+        color: var(--primary-color);
+        letter-spacing: 2px;
+        margin-bottom: 24px;
+        font-size: 2rem;
       }
-      ::-webkit-scrollbar-thumb {
-        background: #334155;
-        border-radius: 4px;
+
+      h2 {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        margin-bottom: 12px;
       }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #475569;
+
+      .goal-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin-bottom: 16px;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border-left: 5px solid var(--accent-color);
+      }
+
+      .focus-card {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin: 24px 0;
+      }
+
+      .focus-card ol {
+        padding-left: 20px;
+      }
+
+      .focus-card li {
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--heading-color);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 32px;
+        font-style: italic;
+        color: #64748b;
+      }
+
+      footer p {
+        margin-bottom: 8px;
       }
     </style>
   </head>
-  <body
-    class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white"
-  >
-    <!-- Header -->
-    <header
-      class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 py-4 px-6 shadow-xl"
-    >
-      <div
-        class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4"
-      >
-        <div class="flex items-center gap-3 text-center md:text-left">
-          <div
-            class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/20"
-          >
-            🎯
-          </div>
-          <div>
-            <h1
-              class="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent"
-            >
-              Irson’s Goal
-            </h1>
-            <p class="text-xs text-slate-400 italic">
-              "Papi, mami, dan aku semuanya ingat banget di Irson’s Goal. Yang
-              ini semuanya benar banget!"
-            </p>
-          </div>
-        </div>
-        <div
-          class="bg-slate-900/80 border border-slate-800 px-5 py-2.5 rounded-2xl flex items-center gap-5 shadow-inner"
-        >
-          <div>
-            <div
-              class="text-[10px] text-slate-400 uppercase tracking-wider font-bold"
-            >
-              Total Progress
-            </div>
-            <div
-              id="progress-text"
-              class="text-lg font-extrabold text-indigo-400"
-            >
-              0%
-            </div>
-          </div>
-          <div
-            class="w-36 bg-slate-800 rounded-full h-3 overflow-hidden p-0.5 border border-slate-700/50"
-          >
-            <div
-              id="progress-bar"
-              class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 h-full rounded-full transition-all duration-500 shadow-sm"
-              style="width: 0%"
-            ></div>
-          </div>
-        </div>
-      </div>
-    </header>
+  <body>
+    <main class="container">
+      <h1>Doa Irson</h1>
 
-    <!-- Navigation Tabs -->
-    <nav class="max-w-7xl mx-auto px-6 w-full pt-6">
-      <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-4">
-        <button
-          onclick="switchTab('all')"
-          class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition"
-          data-tab="all"
-        >
-          🌟 Semua Impian (Overview)
-        </button>
-        <button
-          onclick="switchTab('focus')"
-          class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800 transition"
-          data-tab="focus"
-        >
-          🚀 6 Skill Fokus
-        </button>
-        <button
-          onclick="switchTab('health')"
-          class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800 transition"
-          data-tab="health"
-        >
-          ❤️ Kesehatan & Keluarga
-        </button>
-        <button
-          onclick="switchTab('lifestyle')"
-          class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800 transition"
-          data-tab="lifestyle"
-        >
-          ✈️ Karir & Mobilitas
-        </button>
-        <button
-          onclick="switchTab('countries')"
-          class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800 transition"
-          data-tab="countries"
-        >
-          🌍 Peringkat Negara
-        </button>
-      </div>
-    </nav>
-
-    <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto px-6 py-8 w-full flex-grow">
-      <!-- TAB ALL -->
-      <div
-        id="tab-all"
-        class="tab-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        <!-- Card 1: 6 Core Focus Skills -->
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm flex flex-col justify-between"
-        >
-          <div>
-            <div
-              class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800"
-            >
-              <h2
-                class="text-base font-bold text-white flex items-center gap-2"
-              >
-                <span>🚀</span> 6 Fokus Utama Belajar
-              </h2>
-              <span
-                class="text-[10px] bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full font-medium"
-                >Kunci Sukses</span
-              >
-            </div>
-            <p class="text-slate-400 text-xs mb-4">
-              Tercapai kalau fokus pada:
-            </p>
-            <div class="space-y-2.5" id="list-focus"></div>
-          </div>
+      <section aria-label="Personal Goals">
+        <div class="goal-card">
+          Telinga Irson semuanya good listening, sembuh, bisa mendengar lebih
+          jelas, dan normal.
         </div>
-
-        <!-- Card 2: Health & Nainai -->
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm flex flex-col justify-between"
-        >
-          <div>
-            <div
-              class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800"
-            >
-              <h2
-                class="text-base font-bold text-white flex items-center gap-2"
-              >
-                <span>❤️️</span> Kesehatan & Pendengaran
-              </h2>
-              <span
-                class="text-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-medium"
-                >Sempurna</span
-              >
-            </div>
-            <p class="text-slate-400 text-xs mb-4">
-              Tubuh, telinga, & kesehatan Nainai:
-            </p>
-            <div class="space-y-2.5" id="list-health"></div>
-          </div>
+        <div class="goal-card">
+          Tubuh Irson semuanya lengkap, sempurna, berfungsi dengan baik, dan
+          normal.
         </div>
-
-        <!-- Card 3: Family & Kelly -->
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm flex flex-col justify-between"
-        >
-          <div>
-            <div
-              class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800"
-            >
-              <h2
-                class="text-base font-bold text-white flex items-center gap-2"
-              >
-                <span>👨‍👩‍👧‍👦</span> Keluarga & Kelly di China
-              </h2>
-              <span
-                class="text-[10px] bg-amber-500/10 border border-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-medium"
-                >Stabil</span
-              >
-            </div>
-            <p class="text-slate-400 text-xs mb-4">
-              Keluarga Kelly & kebersamaan di China:
-            </p>
-            <div class="space-y-2.5" id="list-family"></div>
-          </div>
+        <div class="goal-card">
+          Single, tidak ada cewek, tinggal bareng papi, mami, dan Kelly, gak
+          usah pikir cewek lagi.
         </div>
-
-        <!-- Card 4: Living, Travel & Work -->
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm flex flex-col justify-between"
-        >
-          <div>
-            <div
-              class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800"
-            >
-              <h2
-                class="text-base font-bold text-white flex items-center gap-2"
-              >
-                <span>✈️</span> Kerja Remote & Keliling Dunia
-              </h2>
-              <span
-                class="text-[10px] bg-blue-500/10 border border-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-medium"
-                >Amerika & Eropa</span
-              >
-            </div>
-            <p class="text-slate-400 text-xs mb-4">
-              Remote US, VPN, Kereta Cepat & Travel:
-            </p>
-            <div class="space-y-2.5" id="list-lifestyle"></div>
-          </div>
+        <div class="goal-card">
+          Tuhan sudah kasih kita tinggal di negara yang paling bagus untuk kita
+          adalah tinggal di Amerika (United States), gak usah pindah, gak usah
+          pikir negara lain lagi.
         </div>
+      </section>
 
-        <!-- Card 5: Country Rankings -->
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm md:col-span-2 lg:col-span-2 flex flex-col justify-between"
-        >
-          <div>
-            <div
-              class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800"
-            >
-              <h2
-                class="text-base font-bold text-white flex items-center gap-2"
-              >
-                <span>🌍</span> Peringkat Negara untuk Irson’s Goal
-              </h2>
-              <span
-                class="text-[10px] bg-purple-500/10 border border-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-medium"
-                >Destinasi Utama</span
-              >
-            </div>
-            <p class="text-slate-400 text-xs mb-4">Negara terbaik pilihan:</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div
-                class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-xl"
-              >
-                <div class="text-[11px] text-indigo-400 font-extrabold mb-0.5">
-                  RANK #1
-                </div>
-                <div class="font-bold text-sm mb-1">🇺🇸 Amerika Serikat</div>
-                <div class="text-[11px] text-slate-400">
-                  Tempat tinggal terbaik, perusahaan remote, pengobatan Nainai,
-                  jalan-jalan bersama Kelly.
-                </div>
-              </div>
-              <div
-                class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-xl"
-              >
-                <div class="text-[11px] text-indigo-400 font-extrabold mb-0.5">
-                  RANK #2
-                </div>
-                <div class="font-bold text-sm mb-1">
-                  🇳🇱 Belanda (Netherlands)
-                </div>
-                <div class="text-[11px] text-slate-400">
-                  Pilihan negara Eropa berkualitas tinggi untuk masa depan.
-                </div>
-              </div>
-              <div
-                class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-xl"
-              >
-                <div class="text-[11px] text-indigo-400 font-extrabold mb-0.5">
-                  RANK #3
-                </div>
-                <div class="font-bold text-sm mb-1">🇵🇱 Polandia (Poland)</div>
-                <div class="text-[11px] text-slate-400">
-                  Negara Eropa aman, damai, dan stabil.
-                </div>
-              </div>
-              <div
-                class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-xl"
-              >
-                <div class="text-[11px] text-indigo-400 font-extrabold mb-0.5">
-                  RANK #4
-                </div>
-                <div class="font-bold text-sm mb-1">🇨🇳 China</div>
-                <div class="text-[11px] text-slate-400">
-                  Tinggal 1 bulan bersama Papi, Mami, & Kelly, kereta cepat,
-                  VPN, lalu pindah.
-                </div>
-              </div>
-              <div
-                class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-xl sm:col-span-2 lg:col-span-1"
-              >
-                <div class="text-[11px] text-indigo-400 font-extrabold mb-0.5">
-                  RANK #5
-                </div>
-                <div class="font-bold text-sm mb-1">🇮🇩 Indonesia</div>
-                <div class="text-[11px] text-slate-400">
-                  Akar keluarga & kenangan awal.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <section class="focus-card">
+        <h2>Irson mau fokus belajar:</h2>
+        <ol>
+          <li>Web Development</li>
+          <li>English</li>
+          <li>Mandarin Chinese</li>
+        </ol>
+      </section>
 
-      <!-- TAB FOCUS -->
-      <div id="tab-focus" class="tab-content hidden max-w-3xl mx-auto">
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl"
-        >
-          <h2 class="text-xl font-bold mb-2 text-white">
-            🚀 6 Skill Fokus Utama
-          </h2>
-          <p class="text-xs text-slate-400 mb-6">
-            Pondasi utama agar seluruh impian Irson terwujud nyata.
-          </p>
-          <div class="space-y-3" id="expanded-list-focus"></div>
-        </div>
-      </div>
-
-      <!-- TAB HEALTH -->
-      <div id="tab-health" class="tab-content hidden max-w-3xl mx-auto">
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl"
-        >
-          <h2 class="text-xl font-bold mb-2 text-white">
-            ❤️ Kesehatan, Pendengaran & Nainai
-          </h2>
-          <p class="text-xs text-slate-400 mb-6">
-            Tubuh sehat sempurna dan pengobatan Nainai di Amerika Serikat.
-          </p>
-          <div class="space-y-3" id="expanded-list-health"></div>
-        </div>
-      </div>
-
-      <!-- TAB LIFESTYLE -->
-      <div id="tab-lifestyle" class="tab-content hidden max-w-3xl mx-auto">
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl"
-        >
-          <h2 class="text-xl font-bold mb-2 text-white">
-            ✈️ Karir Remote, Kelly & Mobilitas Global
-          </h2>
-          <p class="text-xs text-slate-400 mb-6">
-            Kerja remote US, tinggal 1 bulan di China lalu ke US/Eropa, VPN, dan
-            keliling dunia.
-          </p>
-          <div class="space-y-3" id="expanded-list-lifestyle"></div>
-        </div>
-      </div>
-
-      <!-- TAB COUNTRIES -->
-      <div id="tab-countries" class="tab-content hidden max-w-4xl mx-auto">
-        <div
-          class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl"
-        >
-          <h2 class="text-xl font-bold mb-2 text-white">
-            🌍 Negara Pilihan Irson’s Goal
-          </h2>
-          <p class="text-xs text-slate-400 mb-6">
-            Urutan negara terbaik untuk tempat tinggal dan masa depan.
-          </p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-              <span class="text-indigo-400 font-bold"
-                >1. 🇺🇸 Amerika Serikat</span
-              >
-              <p class="text-xs text-slate-400 mt-1">
-                Negara terbaik untuk tinggal, bekerja remote, mengobati Nainai,
-                dan jalan-jalan bersama Kelly.
-              </p>
-            </div>
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-              <span class="text-indigo-400 font-bold"
-                >2. 🇳🇱 Belanda (Netherlands)</span
-              >
-              <p class="text-xs text-slate-400 mt-1">
-                Negara Eropa berkualitas tinggi untuk masa depan yang stabil.
-              </p>
-            </div>
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-              <span class="text-indigo-400 font-bold"
-                >3. 🇵🇱 Polandia (Poland)</span
-              >
-              <p class="text-xs text-slate-400 mt-1">
-                Negara Eropa yang aman dan damai.
-              </p>
-            </div>
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-              <span class="text-indigo-400 font-bold">4. 🇨🇳 China</span>
-              <p class="text-xs text-slate-400 mt-1">
-                Tinggal 1 bulan bersama Papi, Mami, dan Kelly, naik kereta
-                cepat, pakai VPN.
-              </p>
-            </div>
-            <div
-              class="bg-slate-950 p-4 rounded-xl border border-slate-800 md:col-span-2"
-            >
-              <span class="text-indigo-400 font-bold">5. 🇮🇩 Indonesia</span>
-              <p class="text-xs text-slate-400 mt-1">
-                Akar tanah air tercinta.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reset Button -->
-      <div
-        class="max-w-7xl mx-auto mt-8 flex justify-between items-center px-2"
-      >
-        <span class="text-xs text-slate-400 italic"
-          >"Papi, mami, dan aku semuanya ingat banget di Irson’s Goal."</span
-        >
-        <button
-          id="reset-btn"
-          class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-semibold border border-slate-800 transition"
-        >
-          Reset Progress
-        </button>
-      </div>
+      <footer>
+        <p>Jangan pikir Irson's Goal terus</p>
+      </footer>
     </main>
-
-    <!-- Footer -->
-    <footer
-      class="bg-slate-900 border-t border-slate-800 py-4 px-6 text-center text-xs text-slate-500"
-    >
-      Irson's Goal Dashboard &bull; All Rights Reserved &bull; 2026
-    </footer>
-
-    <!-- Script Application Logic -->
-    <script>
-      const goalData = {
-        focus: [
-          { id: "f1", text: "1. Belajar Web Developer" },
-          { id: "f2", text: "2. Belajar English" },
-          { id: "f3", text: "3. Belajar Mandarin" },
-          { id: "f4", text: "4. Belajar Video Editor" },
-          { id: "f5", text: "5. Belajar Social Media" },
-          { id: "f6", text: "6. Belajar AI" },
-        ],
-        health: [
-          {
-            id: "h1",
-            text: "Telinga aku & cewekku good listening, sembuh, bisa mendengar lebih jelas",
-          },
-          {
-            id: "h2",
-            text: "Tubuh aku & cewekku semuanya lengkap, sempurna, berfungsi dengan baik, dan normal",
-          },
-          {
-            id: "h3",
-            text: "Berobat Nainai di Amerika Serikat, biar nainai sehat-sehat & panjang umur",
-          },
-        ],
-        family: [
-          {
-            id: "fam1",
-            text: "Cewekku (Kelly) di China punya younger brother born after 2015",
-          },
-          {
-            id: "fam2",
-            text: "Mother, father, maternal & paternal grandparents semuanya ada, hidup, sehat, tidak cerai, keluarga stabil",
-          },
-          {
-            id: "fam3",
-            text: "Tinggal di China bersama Papi, Mami, dan Kelly",
-          },
-        ],
-        lifestyle: [
-          {
-            id: "l1",
-            text: "Kerja remote di perusahaan Amerika Serikat, tapi tinggal di China",
-          },
-          {
-            id: "l2",
-            text: "Hanya 1 bulan saja tinggal di China, habis itu pindah ke Amerika Serikat atau Eropa (Belanda/Polandia)",
-          },
-          {
-            id: "l3",
-            text: "Keliling dunia di semua negara yang aman & damai, kecuali perang",
-          },
-          {
-            id: "l4",
-            text: "Bisa balik dan jalan-jalan di Amerika Serikat bersama Kelly",
-          },
-          {
-            id: "l5",
-            text: "Dapat VPN China untuk bisa akses aplikasi Amerika Serikat",
-          },
-          {
-            id: "l6",
-            text: "Naik kereta cepat China, gak usah beli mobil lagi di China",
-          },
-        ],
-      };
-
-      let savedState =
-        JSON.parse(localStorage.getItem("irsons_goals_v3")) || {};
-
-      function renderItems(containerId, items) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        container.innerHTML = "";
-        items.forEach((item) => {
-          const isChecked = savedState[item.id] || false;
-          const label = document.createElement("label");
-          label.className = `flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
-            isChecked
-              ? "bg-indigo-950/20 border-indigo-500/30 text-slate-400 line-through opacity-80"
-              : "bg-slate-950/60 border-slate-800/80 hover:bg-slate-800/40 text-slate-200"
-          }`;
-
-          label.innerHTML = `
-                    <input type="checkbox" data-id="${item.id}" ${isChecked ? "checked" : ""} class="mt-0.5 w-4 h-4 text-indigo-600 rounded bg-slate-900 border-slate-700 focus:ring-indigo-500 cursor-pointer flex-shrink-0">
-                    <span class="text-xs leading-relaxed font-medium">${item.text}</span>
-                `;
-          container.appendChild(label);
-        });
-      }
-
-      function renderAll() {
-        renderItems("list-focus", goalData.focus);
-        renderItems("list-health", goalData.health);
-        renderItems("list-family", goalData.family);
-        renderItems("list-lifestyle", goalData.lifestyle);
-
-        renderItems("expanded-list-focus", goalData.focus);
-        renderItems("expanded-list-health", goalData.health);
-        renderItems("expanded-list-lifestyle", [
-          ...goalData.family,
-          ...goalData.lifestyle,
-        ]);
-
-        updateProgress();
-      }
-
-      function updateProgress() {
-        const allItems = [
-          ...goalData.focus,
-          ...goalData.health,
-          ...goalData.family,
-          ...goalData.lifestyle,
-        ];
-        const total = allItems.length;
-        let checked = allItems.filter((item) => savedState[item.id]).length;
-        const percentage = Math.round((checked / total) * 100);
-
-        document.getElementById("progress-text").innerText = `${percentage}%`;
-        document.getElementById("progress-bar").style.width = `${percentage}%`;
-      }
-
-      function switchTab(tabName) {
-        document
-          .querySelectorAll(".tab-content")
-          .forEach((el) => el.classList.add("hidden"));
-        document.querySelectorAll(".tab-btn").forEach((btn) => {
-          btn.classList.remove(
-            "bg-indigo-600",
-            "text-white",
-            "shadow-md",
-            "shadow-indigo-600/30",
-          );
-          btn.classList.add(
-            "bg-slate-900",
-            "text-slate-400",
-            "border",
-            "border-slate-800",
-          );
-        });
-
-        document.getElementById(`tab-${tabName}`).classList.remove("hidden");
-        const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
-        if (activeBtn) {
-          activeBtn.classList.remove(
-            "bg-slate-900",
-            "text-slate-400",
-            "border",
-            "border-slate-800",
-          );
-          activeBtn.classList.add(
-            "bg-indigo-600",
-            "text-white",
-            "shadow-md",
-            "shadow-indigo-600/30",
-          );
-        }
-      }
-
-      document.addEventListener("change", (e) => {
-        if (e.target.tagName === "INPUT" && e.target.type === "checkbox") {
-          const id = e.target.getAttribute("data-id");
-          savedState[id] = e.target.checked;
-          localStorage.setItem("irsons_goals_v3", JSON.stringify(savedState));
-          renderAll();
-        }
-      });
-
-      document.getElementById("reset-btn").addEventListener("click", () => {
-        if (confirm("Yakin ingin mereset semua progress Irson’s Goal?")) {
-          savedState = {};
-          localStorage.removeItem("irsons_goals_v3");
-          renderAll();
-        }
-      });
-
-      window.addEventListener("DOMContentLoaded", renderAll);
-    </script>
   </body>
 </html>
