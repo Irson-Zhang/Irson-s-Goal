@@ -3,212 +3,884 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Doa Irson & Irson's Goal</title>
+    <title>Doa Irson - Personal Portal & Learning Roadmap</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: "#eff6ff",
+                100: "#dbeafe",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- React & ReactDOM (Production) -->
+    <script
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+      crossorigin
+    ></script>
+
+    <!-- Babel Standalone for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      :root {
-        --primary-color: #1e3a8a;
-        --accent-color: #2563eb;
-        --bg-color: #f8fafc;
-        --card-bg: #ffffff;
-        --text-color: #334155;
-        --heading-color: #0f172a;
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
       body {
-        font-family:
-          system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          Roboto,
-          Oxygen,
-          Ubuntu,
-          Cantarell,
-          "Open Sans",
-          "Helvetica Neue",
-          sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        line-height: 1.6;
-        padding: 40px 20px;
+        font-family: "Plus Jakarta Sans", sans-serif;
       }
-
-      .container {
-        max-width: 700px;
-        margin: 0 auto;
+      .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
       }
-
-      h1 {
-        text-align: center;
-        text-transform: uppercase;
-        color: var(--primary-color);
-        letter-spacing: 2px;
-        margin-bottom: 24px;
-        font-size: 2rem;
+      .dark .glass-card {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
       }
-
-      h2 {
-        color: var(--primary-color);
-        font-size: 1.1rem;
-        margin-bottom: 12px;
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
       }
-
-      .goal-card {
-        background: var(--card-bg);
-        border-radius: 12px;
-        padding: 24px 28px;
-        margin-bottom: 16px;
-        box-shadow:
-          0 4px 6px -1px rgba(0, 0, 0, 0.05),
-          0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        border-left: 5px solid var(--accent-color);
+      ::-webkit-scrollbar-track {
+        background: transparent;
       }
-
-      .focus-card {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        border-radius: 12px;
-        padding: 24px 28px;
-        margin: 24px 0;
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
       }
-
-      .focus-card ol {
-        padding-left: 20px;
-      }
-
-      .focus-card li {
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: var(--heading-color);
-      }
-
-      .divider {
-        border: none;
-        border-top: 2px dashed #cbd5e1;
-        margin: 60px 0;
-      }
-
-      footer {
-        text-align: center;
-        margin-top: 32px;
-        font-style: italic;
-        color: #64748b;
-      }
-
-      footer p {
-        margin-bottom: 8px;
+      .dark ::webkit-scrollbar-thumb {
+        background: #334155;
       }
     </style>
   </head>
-  <body>
-    <!-- SECTION 1: DOA IRSON -->
-    <main class="container">
-      <h1>Doa Irson</h1>
+  <body
+    class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300"
+  >
+    <div id="root"></div>
 
-      <section aria-label="Personal Goals">
-        <div class="goal-card">
-          Telinga aku semuanya good listening, sembuh, bisa mendengar lebih
-          jelas, dan normal.
-        </div>
-        <div class="goal-card">
-          Tubuh aku semuanya lengkap, sempurna, berfungsi dengan baik, dan
-          normal.
-        </div>
-        <div class="goal-card">
-          Single, tidak ada cewek, tinggal bareng papi, mami, dan Kelly, gak
-          usah pikir cewek lagi.
-        </div>
-        <div class="goal-card">
-          Tuhan sudah kasih kita tinggal di negara yang no. 1 paling bagus untuk
-          kita adalah tinggal di Amerika (United States), gak usah pindah, gak
-          usah pikir negara lain lagi.
-        </div>
-      </section>
+    <script type="text/babel">
+      const { useState, useEffect, useRef } = React;
 
-      <section class="focus-card">
-        <h2>Aku mau fokus belajar:</h2>
-        <ol>
-          <li>Web Development</li>
-          <li>English</li>
-          <li>Mandarin Chinese</li>
-        </ol>
-      </section>
+      // Helper to trigger Lucide icons render
+      const Icon = ({ name, className = "w-5 h-5", ...props }) => {
+        useEffect(() => {
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+        }, [name]);
 
-      <section class="focus-card">
-        <h2>Nanti belajar:</h2>
-        <ol>
-          <li>AI</li>
-          <li>Video Editing</li>
-          <li>Social Media</li>
-        </ol>
-      </section>
+        return <i data-lucide={name} class={className} {...props}></i>;
+      };
 
-      <footer>
-        <p>Yang ini semuanya 100% benar banget di Doa Irson.</p>
-        <p>Papi, mami, aku, dan Kelly semuanya ingat banget di Doa Irson.</p>
-        <p>
-          Irson's Goal bahasnya nanti kalo aku sudah selesai belajar Web
-          Development.
-        </p>
-      </footer>
+      function App() {
+        // --- Initial States ---
+        const [darkMode, setDarkMode] = useState(() => {
+          return localStorage.getItem("irson_theme") === "dark";
+        });
 
-      <!-- <hr class="divider" /> -->
+        // Ambient Audio State
+        const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+        const [audioMode, setAudioMode] = useState("zen"); // 'zen', 'rain', 'waves'
+        const audioCtxRef = useRef(null);
+        const noiseNodeRef = useRef(null);
+        const gainNodeRef = useRef(null);
 
-      <!-- SECTION 2: IRSON'S GOAL -->
-      <!-- <h1>Irson's Goal</h1>
+        // Text-To-Speech (Web Speech API)
+        const [isSpeaking, setIsSpeaking] = useState(false);
+        const [speechRate, setSpeechRate] = useState(1);
+        const [speechPitch, setSpeechPitch] = useState(1);
 
-      <section aria-label="Personal Goals">
-        <div class="goal-card">
-          Aku mau kerja remote di perusahaan Amerika (United States).
-        </div>
-        <div class="goal-card">
-          Berobat nainai di Amerika (United States), biar nainai sehat-sehat,
-          nainai bisa panjang umur.
-        </div>
-        <div class="goal-card">
-          Beli mobil Tesla, biar bisa jalan-jalan keliling Amerika (United
-          States).
-        </div>
-        <div class="goal-card">
-          Beli rumah di 83-45 Vietor Avenue, Elmhurst, Queens, New York, tinggal
-          di Amerika (United States), negara no.1 paling bagus, gak usah pindah
-          rumah lagi.
-        </div>
-        <div class="goal-card">
-          United States sudah kayak China, karena Elmhurst, Queens, New York
-          sudah kayak Guangzhou; Manhattan, New York sudah kayak Shanghai;
-          Silicon Valley, California sudah kayak Shenzhen, gak usah ke China
-          lagi.
-        </div>
-        <div class="goal-card">
-          Kita tinggal, jalan-jalan, dan keliling dunia di Amerika (United
-          States), jenguk keluarga di Indonesia, 2 negara saja, gak usah
-          jalan-jalan ke luar negeri lagi.
-        </div>
-        <div class="goal-card">
-          United States adalah negara maju kita, Indonesia adalah negara
-          berkembang kita, gak usah ranking countries lagi.
-        </div>
-      </section>
+        // Core Affirmations
+        const defaultGoals = [
+          {
+            id: 1,
+            title: "Kesehatan & Pendengaran",
+            text: "Telinga aku semuanya good listening, sembuh, bisa mendengar lebih jelas, dan normal.",
+            icon: "ear",
+            category: "Health",
+            completed: false,
+          },
+          {
+            id: 2,
+            title: "Kesempurnaan Fisik Tubuh",
+            text: "Tubuh aku semuanya lengkap, sempurna, berfungsi dengan baik, dan normal.",
+            icon: "activity",
+            category: "Health",
+            completed: false,
+          },
+          {
+            id: 3,
+            title: "Komitmen Keluarga & Status",
+            text: "Single, tidak ada cewek, tinggal bareng papi, mami, dan Kelly, gak usah pikir cewek lagi.",
+            icon: "home",
+            category: "Family",
+            completed: false,
+          },
+          {
+            id: 4,
+            title: "Tempat Tinggal Terbaik (USA)",
+            text: "Tuhan sudah kasih kita tinggal di negara yang no. 1 paling bagus untuk kita adalah tinggal di Amerika (United States), gak usah pindah, gak usah pikir negara lain lagi.",
+            icon: "map-pin",
+            category: "Life",
+            completed: false,
+          },
+        ];
 
-      <section class="focus-card">
-        <h2>Negara yang paling bagus untuk Irson's Goal adalah:</h2>
-        <ol>
-          <li>🇺🇸 United States</li>
-          <li>🇮🇩 Indonesia</li>
-        </ol>
-      </section>
+        const [goals, setGoals] = useState(() => {
+          const saved = localStorage.getItem("irson_goals");
+          return saved ? JSON.parse(saved) : defaultGoals;
+        });
 
-      <footer>
-        <p>Aku mau yang ini bisa jadi real di masa depan di Irson's Goal.</p>
-        <p>Aku mau impian ini bisa tercapai di Irson's Goal.</p>
-      </footer> -->
-    </main>
+        // Current Learning Tracker
+        const defaultCurrentFocus = [
+          {
+            id: "webdev",
+            title: "Web Development",
+            desc: "Full-Stack Web Skills (HTML, CSS, JS, React, Tailwind CSS)",
+            icon: "code",
+            progress: 65,
+            color: "from-blue-500 to-indigo-600",
+            resources: [
+              { name: "MDN Web Docs", url: "https://developer.mozilla.org" },
+              { name: "React Documentation", url: "https://react.dev" },
+            ],
+            tasks: [
+              { id: 1, text: "Kuasai HTML5 & Semantic Elements", done: true },
+              {
+                id: 2,
+                text: "Pahami Tailwind CSS Layouts & Responsive Design",
+                done: true,
+              },
+              {
+                id: 3,
+                text: "Master Modern JavaScript ES6+ & Async/Await",
+                done: false,
+              },
+              {
+                id: 4,
+                text: "Buat React Interactive Single-Page Apps",
+                done: true,
+              },
+            ],
+          },
+          {
+            id: "english",
+            title: "English Fluency",
+            desc: "Speaking, Listening, Pronunciation & Vocabulary Mastery",
+            icon: "languages",
+            progress: 80,
+            color: "from-emerald-500 to-teal-600",
+            resources: [
+              {
+                name: "BBC Learning English",
+                url: "https://www.bbc.co.uk/learningenglish",
+              },
+              { name: "TED Talks Audio", url: "https://www.ted.com" },
+            ],
+            tasks: [
+              {
+                id: 1,
+                text: "Latihan Daily English Listening (30 Menit)",
+                done: true,
+              },
+              { id: 2, text: "Praktek Pronunciation & Shadowing", done: true },
+              {
+                id: 3,
+                text: "Perluas Kosakata Harian (10 Kata Baru)",
+                done: false,
+              },
+            ],
+          },
+          {
+            id: "mandarin",
+            title: "Mandarin Chinese",
+            desc: "Pinyin, Listening Comprehension, Speaking & Basic Characters",
+            icon: "book-open",
+            progress: 40,
+            color: "from-amber-500 to-orange-600",
+            resources: [
+              { name: "ChinesePod", url: "https://chinesepod.com" },
+              { name: "HSK Vocabulary List", url: "https://hsk.academy" },
+            ],
+            tasks: [
+              {
+                id: 1,
+                text: "Latihan Tiga Nada (4 Tones) & Pinyin",
+                done: true,
+              },
+              {
+                id: 2,
+                text: "Hafal Conversation Bahasa Mandarin Harian",
+                done: false,
+              },
+              {
+                id: 3,
+                text: "Latihan Listening percakapan sederhana",
+                done: false,
+              },
+            ],
+          },
+        ];
+
+        const [currentFocus, setCurrentFocus] = useState(() => {
+          const saved = localStorage.getItem("irson_focus");
+          return saved ? JSON.parse(saved) : defaultCurrentFocus;
+        });
+
+        // Future Learning Roadmap
+        const defaultFutureRoadmap = [
+          {
+            id: 1,
+            name: "Artificial Intelligence (AI)",
+            badge: "Fase 2",
+            desc: "Machine Learning, Prompt Engineering & AI Apps Integration",
+            icon: "cpu",
+          },
+          {
+            id: 2,
+            name: "Video Editing",
+            badge: "Fase 2",
+            desc: "Professional Motion Graphics, Storytelling & Visual Effects",
+            icon: "video",
+          },
+          {
+            id: 3,
+            name: "Social Media Strategy",
+            badge: "Fase 3",
+            desc: "Digital Branding, Content Strategy & Community Engagement",
+            icon: "share-2",
+          },
+        ];
+
+        const [futureRoadmap] = useState(defaultFutureRoadmap);
+
+        // Notes / Reflection Section
+        const [notes, setNotes] = useState(() => {
+          return (
+            localStorage.getItem("irson_notes") ||
+            "Fokus utama sekarang adalah menyelesaikan Web Development sampai tuntas! Selalu ingat doa dan rasa syukur setiap hari."
+          );
+        });
+
+        // --- Effects & Sync ---
+        useEffect(() => {
+          if (darkMode) {
+            document.documentElement.classList.add("dark");
+            localStorage.setItem("irson_theme", "dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+            localStorage.setItem("irson_theme", "light");
+          }
+        }, [darkMode]);
+
+        useEffect(() => {
+          localStorage.setItem("irson_goals", JSON.stringify(goals));
+        }, [goals]);
+
+        useEffect(() => {
+          localStorage.setItem("irson_focus", JSON.stringify(currentFocus));
+        }, [currentFocus]);
+
+        useEffect(() => {
+          localStorage.setItem("irson_notes", notes);
+        }, [notes]);
+
+        // Refresh icons on update
+        useEffect(() => {
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+        });
+
+        // --- Speech Synthesis Functions ---
+        const handleSpeakAll = () => {
+          if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel(); // stop active
+
+            if (isSpeaking) {
+              setIsSpeaking(false);
+              return;
+            }
+
+            const allText = [
+              "Doa Irson.",
+              ...goals.map((g) => `${g.title}: ${g.text}`),
+              "Fokus Belajar Saat Ini:",
+              ...currentFocus.map((f) => f.title),
+              "Pernyataan Utama: Yang ini semuanya 100 persen benar banget di Doa Irson. Papi, mami, aku, dan Kelly semuanya ingat banget di Doa Irson.",
+            ].join(". ");
+
+            const utterance = new SpeechSynthesisUtterance(allText);
+            utterance.lang = "id-ID";
+            utterance.rate = speechRate;
+            utterance.pitch = speechPitch;
+
+            utterance.onend = () => setIsSpeaking(false);
+            utterance.onerror = () => setIsSpeaking(false);
+
+            setIsSpeaking(true);
+            window.speechSynthesis.speak(utterance);
+          } else {
+            alert(
+              "Fitur pembaca suara (Text-to-Speech) tidak didukung pada peramban ini.",
+            );
+          }
+        };
+
+        const handleSpeakSingle = (text) => {
+          if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = "id-ID";
+            utterance.rate = speechRate;
+            utterance.pitch = speechPitch;
+            window.speechSynthesis.speak(utterance);
+          }
+        };
+
+        // --- Ambient Sound Synthesizer (Web Audio API) ---
+        const toggleAmbientAudio = () => {
+          if (isPlayingAudio) {
+            if (audioCtxRef.current) {
+              audioCtxRef.current.close();
+              audioCtxRef.current = null;
+            }
+            setIsPlayingAudio(false);
+          } else {
+            try {
+              const AudioContext =
+                window.AudioContext || window.webkitAudioContext;
+              const ctx = new AudioContext();
+              audioCtxRef.current = ctx;
+
+              const gain = ctx.createGain();
+              gain.gain.setValueAtTime(0.05, ctx.currentTime);
+              gain.connect(ctx.destination);
+              gainNodeRef.current = gain;
+
+              if (audioMode === "zen") {
+                // Sine wave harmonic synth for calming ambient tone
+                const osc1 = ctx.createOscillator();
+                const osc2 = ctx.createOscillator();
+                osc1.type = "sine";
+                osc2.type = "sine";
+                osc1.frequency.setValueAtTime(174, ctx.currentTime); // 174 Hz Solfeggio frequency
+                osc2.frequency.setValueAtTime(285, ctx.currentTime);
+                osc1.connect(gain);
+                osc2.connect(gain);
+                osc1.start();
+                osc2.start();
+              } else {
+                // Pink/White Noise Generator for Rain / Natural focus
+                const bufferSize = ctx.sampleRate * 2;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                let b0 = 0,
+                  b1 = 0,
+                  b2 = 0,
+                  b3 = 0,
+                  b4 = 0,
+                  b5 = 0,
+                  b6 = 0;
+                for (let i = 0; i < bufferSize; i++) {
+                  let white = Math.random() * 2 - 1;
+                  b0 = 0.99886 * b0 + white * 0.0555179;
+                  b1 = 0.99332 * b1 + white * 0.0750759;
+                  b2 = 0.969 * b2 + white * 0.153852;
+                  b3 = 0.8665 * b3 + white * 0.3104856;
+                  b4 = 0.55 * b4 + white * 0.5329522;
+                  b5 = -0.7616 * b5 - white * 0.016898;
+                  data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                  data[i] *= 0.11; // Volume compensation
+                  b6 = white * 0.115926;
+                }
+
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+                noise.loop = true;
+                noise.connect(gain);
+                noise.start();
+              }
+
+              setIsPlayingAudio(true);
+            } catch (e) {
+              console.error("Audio error", e);
+            }
+          }
+        };
+
+        // Toggle Goal completion
+        const toggleGoal = (id) => {
+          setGoals(
+            goals.map((g) =>
+              g.id === id ? { ...g, completed: !g.completed } : g,
+            ),
+          );
+        };
+
+        // Toggle Sub-task completion
+        const toggleTask = (focusId, taskId) => {
+          setCurrentFocus(
+            currentFocus.map((item) => {
+              if (item.id === focusId) {
+                const updatedTasks = item.tasks.map((t) =>
+                  t.id === taskId ? { ...t, done: !t.done } : t,
+                );
+                const doneCount = updatedTasks.filter((t) => t.done).length;
+                const newProgress = Math.round(
+                  (doneCount / updatedTasks.length) * 100,
+                );
+                return { ...item, tasks: updatedTasks, progress: newProgress };
+              }
+              return item;
+            }),
+          );
+        };
+
+        // Overall Progress Calculation
+        const completedGoalsCount = goals.filter((g) => g.completed).length;
+        const totalProgressAvg = Math.round(
+          currentFocus.reduce((acc, curr) => acc + curr.progress, 0) /
+            currentFocus.length,
+        );
+
+        return (
+          <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+            {/* Top Header & Navigation */}
+            <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-800 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                  <Icon name="heart-handshake" className="w-8 h-8" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                    Doa Irson
+                    <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                      Official Portal
+                    </span>
+                  </h1>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                    Irson's Personal Prayers, Key Focus & Learning Roadmap
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick Actions / Theme Toggle / Audio */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={toggleAmbientAudio}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-medium text-sm transition-all ${
+                    isPlayingAudio
+                      ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
+                      : "bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  }`}
+                  title="Suara Latar Penenang / Focus Sound"
+                >
+                  <Icon
+                    name={isPlayingAudio ? "volume-2" : "volume-x"}
+                    className="w-4 h-4"
+                  />
+                  <span>
+                    {isPlayingAudio ? "Ambient Active" : "Ambient Sound"}
+                  </span>
+                </button>
+
+                <button
+                  onClick={handleSpeakAll}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-medium text-sm transition-all ${
+                    isSpeaking
+                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20 animate-pulse"
+                      : "bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                  }`}
+                  title="Dengarkan Doa Dibacakan"
+                >
+                  <Icon
+                    name={isSpeaking ? "square" : "play"}
+                    className="w-4 h-4"
+                  />
+                  <span>{isSpeaking ? "Stop Voice" : "Dengar Doa"}</span>
+                </button>
+
+                <button
+                  onClick={() => setDarkMode(!darkMode)}
+                  className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                  title="Ganti Tema Dark/Light"
+                >
+                  <Icon name={darkMode ? "sun" : "moon"} className="w-5 h-5" />
+                </button>
+              </div>
+            </header>
+
+            {/* Key Overview Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    Komitmen Doa
+                  </p>
+                  <h3 className="text-2xl font-extrabold mt-1 text-slate-900 dark:text-white">
+                    {completedGoalsCount} / {goals.length}{" "}
+                    <span className="text-xs font-normal text-slate-500">
+                      Diaminkan
+                    </span>
+                  </h3>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                  <Icon name="check-circle-2" className="w-6 h-6" />
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    Progress Belajar
+                  </p>
+                  <h3 className="text-2xl font-extrabold mt-1 text-blue-600 dark:text-blue-400">
+                    {totalProgressAvg}%
+                  </h3>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                  <Icon name="trending-up" className="w-6 h-6" />
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    Lokasi Utama
+                  </p>
+                  <h3 className="text-lg font-bold mt-1 text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                    <Icon name="flag" className="w-4 h-4 text-red-500" />
+                    United States (USA)
+                  </h3>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <Icon name="globe" className="w-6 h-6" />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 1: Core Doa & Affirmation Cards */}
+            <section className="mb-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Icon name="shield-check" className="w-5 h-5 text-blue-600" />
+                  Pokok Doa & Key Commitments
+                </h2>
+                <span className="text-xs text-slate-500 font-medium">
+                  Klik pada kartu untuk konfirmasi ketetapan hati
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {goals.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => toggleGoal(item.id)}
+                    className={`group relative p-6 rounded-2xl cursor-pointer transition-all duration-300 border ${
+                      item.completed
+                        ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-sm"
+                        : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 shadow-sm hover:shadow-md"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3.5">
+                        <div
+                          className={`p-3 rounded-xl transition ${
+                            item.completed
+                              ? "bg-emerald-500 text-white"
+                              : "bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white"
+                          }`}
+                        >
+                          <Icon
+                            name={item.icon || "heart"}
+                            className="w-5 h-5"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base leading-snug">
+                            {item.title}
+                          </h3>
+                          <p className="text-slate-600 dark:text-slate-300 text-sm mt-1.5 leading-relaxed font-medium">
+                            "{item.text}"
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSpeakSingle(item.text);
+                        }}
+                        className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                        title="Bacakan Doa Ini"
+                      >
+                        <Icon name="volume-2" className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                      <span className="font-medium flex items-center gap-1">
+                        <Icon name="tag" className="w-3.5 h-3.5" />
+                        {item.category}
+                      </span>
+                      <span
+                        className={`font-semibold flex items-center gap-1 ${
+                          item.completed
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-slate-400"
+                        }`}
+                      >
+                        <Icon
+                          name={item.completed ? "check-circle" : "circle"}
+                          className="w-3.5 h-3.5"
+                        />
+                        {item.completed ? "Telah Diaminkan" : "Aktif Dalam Doa"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Section 2: Current Focus Trackers */}
+            <section className="mb-10">
+              <div className="mb-4">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Icon name="sparkles" className="w-5 h-5 text-amber-500" />
+                  Aku Mau Fokus Belajar (Saat Ini)
+                </h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Peningkatan keahlian aktif harian untuk mencapai kemandirian &
+                  kesuksesan.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {currentFocus.map((focus) => (
+                  <div
+                    key={focus.id}
+                    className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Header Skill */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400">
+                            <Icon name={focus.icon} className="w-5 h-5" />
+                          </div>
+                          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg">
+                            {focus.title}
+                          </h3>
+                        </div>
+                        <span className="text-sm font-extrabold text-blue-600 dark:text-blue-400">
+                          {focus.progress}%
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 font-medium">
+                        {focus.desc}
+                      </p>
+
+                      {/* Progress Bar */}
+                      <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden mb-5">
+                        <div
+                          className={`h-full bg-gradient-to-r ${focus.color} transition-all duration-500 rounded-full`}
+                          style={{ width: `${focus.progress}%` }}
+                        ></div>
+                      </div>
+
+                      {/* Task Checklist */}
+                      <div className="space-y-2.5 mb-5">
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                          Checklist Milestone
+                        </p>
+                        {focus.tasks.map((task) => (
+                          <label
+                            key={task.id}
+                            className="flex items-start gap-2.5 cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={task.done}
+                              onChange={() => toggleTask(focus.id, task.id)}
+                              className="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                            />
+                            <span
+                              className={
+                                task.done
+                                  ? "line-through text-slate-400 dark:text-slate-500"
+                                  : ""
+                              }
+                            >
+                              {task.text}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Resource Links */}
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                        Sumber Belajar
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {focus.resources.map((res, i) => (
+                          <a
+                            key={i}
+                            href={res.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-300 transition"
+                          >
+                            <span>{res.name}</span>
+                            <Icon
+                              name="external-link"
+                              className="w-3 h-3 text-slate-400"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Section 3: Future Roadmap */}
+            <section className="mb-10">
+              <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-blue-950 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 relative z-10">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-400/30 mb-2">
+                      <Icon name="compass" className="w-3.5 h-3.5" />
+                      Rencana Masa Depan
+                    </div>
+                    <h2 className="text-2xl font-bold">
+                      Nanti Belajar (Roadmap Pertumbuhan)
+                    </h2>
+                    <p className="text-slate-300 text-sm mt-1">
+                      Langkah berikutnya setelah menyelesaikan target Web
+                      Development & Bahasa.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10 text-xs text-slate-200">
+                    <span className="font-bold text-white">Catatan Utama:</span>{" "}
+                    "Irson's Goal bahasnya nanti kalo aku sudah selesai belajar
+                    Web Development."
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+                  {futureRoadmap.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-white/5 border border-white/10 hover:bg-white/10 p-5 rounded-2xl transition group"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="p-2.5 rounded-xl bg-blue-500/20 text-blue-300 group-hover:scale-110 transition-transform">
+                          <Icon name={item.icon} className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-slate-800 text-blue-300 border border-slate-700">
+                          {item.badge}
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-lg text-white mb-1">
+                        {item.name}
+                      </h3>
+                      <p className="text-slate-300 text-xs leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* Section 4: Daily Journal & Personal Reflection */}
+            <section className="mb-10">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Icon name="notebook" className="w-5 h-5 text-indigo-600" />
+                    Catatan Harian & Perenungan Irson
+                  </h2>
+                  <span className="text-xs text-slate-400">
+                    Tersimpan otomatis
+                  </span>
+                </div>
+
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows="4"
+                  className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                  placeholder="Tuliskan catatan kemajuan, doa harian, atau rasa syukur Anda di sini..."
+                ></textarea>
+              </div>
+            </section>
+
+            {/* Footer Affirmation Statement */}
+            <footer className="mt-12 text-center border-t border-slate-200 dark:border-slate-800 pt-8 pb-12">
+              <div className="max-w-2xl mx-auto space-y-3">
+                <div className="inline-flex items-center justify-center p-3 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 mb-2">
+                  <Icon name="heart" className="w-6 h-6 fill-current" />
+                </div>
+
+                <p className="text-base font-bold text-slate-800 dark:text-slate-200">
+                  "Yang ini semuanya 100% benar banget di Doa Irson."
+                </p>
+
+                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                  Papi, mami, aku, dan Kelly semuanya ingat banget di Doa Irson.
+                </p>
+
+                <p className="text-xs text-slate-500 dark:text-slate-400 italic pt-2">
+                  Irson's Goal bahasnya nanti kalo aku sudah selesai belajar Web
+                  Development.
+                </p>
+              </div>
+            </footer>
+          </div>
+        );
+      }
+
+      // Render App
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
   </body>
 </html>
